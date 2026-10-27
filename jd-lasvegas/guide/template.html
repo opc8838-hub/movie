@@ -1,0 +1,519 @@
+<title>歌词踩点剪辑法</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+/* 布局：拉斯维加斯夜色底 + 片中歌词的橙/青/粉三色；正文单栏 ≈ 68 字宽，时间轴和素材墙放宽到 1200 */
+:root {
+  --bg: #F1F0EC;
+  --panel: #FFFFFF;
+  --sunk: #E5E3DD;
+  --fg: #1C1915;
+  --muted: #6B6358;
+  --line: #D3CEC5;
+  --orange: #C26A00;
+  --orange-hi: #F59A16;
+  --teal: #0E847A;
+  --pink: #B4466A;
+  --white-ink: #1C1915;
+  --chip-bg: rgba(194,106,0,.10);
+  --display: "Archivo", "Bahnschrift", "Arial Narrow", "Microsoft YaHei", sans-serif;
+  --body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "Consolas", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #13110F; --panel: #1D1A17; --sunk: #0D0B0A; --fg: #F2ECE4; --muted: #A69A8C; --line: #3A332C;
+  --orange: #F59A16; --orange-hi: #F59A16; --teal: #45D3C6; --pink: #F2A2B8; --white-ink: #FFFFFF; --chip-bg: rgba(245,154,22,.12);
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #13110F; --panel: #1D1A17; --sunk: #0D0B0A; --fg: #F2ECE4; --muted: #A69A8C; --line: #3A332C;
+  --orange: #F59A16; --orange-hi: #F59A16; --teal: #45D3C6; --pink: #F2A2B8; --white-ink: #FFFFFF; --chip-bg: rgba(245,154,22,.12);
+  color-scheme: dark }
+
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.75;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; }
+.wrap { max-width: 1200px; margin: 0 auto; }
+.prose { max-width: 44rem; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.2; }
+h2 { font-size: clamp(26px, 4vw, 36px); font-weight: 900; }
+h3 { font-size: 19px; font-weight: 700; }
+p { margin: 0; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); }
+.muted { color: var(--muted); }
+.tc { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 12.5px; }
+section { padding-block: 72px 0; display: grid; gap: 28px; }
+.sec-head { display: grid; gap: 12px; }
+.lead { font-size: 18px; color: var(--muted); max-width: 44rem; }
+
+/* 开场 */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 40px; align-items: center; padding-block: 56px 0; }
+.hero h1 { font-family: var(--display); font-weight: 900; font-stretch: 70%; font-size: clamp(44px, 7vw, 84px); line-height: 1; letter-spacing: -.01em; }
+.hero h1 .cn { font-family: var(--body); font-weight: 900; display: block; }
+.hero h1 .en { color: var(--orange-hi); display: block; font-size: .62em; margin-top: 10px; }
+.hero .lead { margin-top: 20px; }
+.hero figure { margin: 0; position: relative; }
+.hero img { width: 100%; display: block; border-radius: 6px; }
+.hero figcaption { margin-top: 8px; font-size: 13px; color: var(--muted); }
+
+/* 四步总览 */
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.step { background: var(--panel); padding: 22px 20px; display: grid; gap: 8px; align-content: start; }
+.step .n { font-family: var(--display); font-weight: 900; font-stretch: 70%; font-size: 40px; line-height: 1; color: var(--orange); }
+.step b { font-size: 18px; }
+.step p { font-size: 14.5px; color: var(--muted); line-height: 1.65; }
+
+/* 身份卡 */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; }
+.card .ph { aspect-ratio: 4 / 3; background: var(--sunk); display: grid; place-items: center; position: relative; }
+.card .ph img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.card .code { position: absolute; top: 8px; left: 8px; font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 3px; background: rgba(0,0,0,.62); color: #fff; }
+.card .kind { position: absolute; top: 8px; right: 8px; font-size: 11px; padding: 2px 7px; border-radius: 3px; background: rgba(0,0,0,.62); color: #fff; }
+.card .kind.person { background: #F59A16; color: #1C1915; }
+.card .bd { padding: 12px 14px 14px; display: grid; gap: 6px; align-content: start; }
+.card .bd b { font-size: 15px; }
+.card dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 13px; line-height: 1.55; }
+.card dt { color: var(--muted); }
+.card dd { margin: 0; min-width: 0; }
+.card .use { margin-top: 4px; font-size: 12.5px; color: var(--orange); }
+.template { background: var(--panel); border: 1px dashed var(--orange); border-radius: 6px; padding: 18px 20px; display: grid; gap: 10px; }
+.template ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: 15px; }
+
+/* 参考片表 */
+.tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 14.5px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: .06em; background: var(--sunk); }
+tr:last-child td { border-bottom: 0; }
+td img { width: 128px; border-radius: 3px; display: block; }
+td .lyr { font-family: var(--display); font-weight: 800; font-stretch: 75%; font-size: 17px; color: var(--orange); }
+.note { background: var(--chip-bg); border-radius: 6px; padding: 16px 18px; font-size: 15px; max-width: 52rem; }
+.note b { color: var(--orange); }
+
+/* 时间轴 */
+.tl-ctrl { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.btn { font: inherit; font-size: 15px; font-weight: 700; padding: 9px 18px; border-radius: 999px; border: 0; background: var(--orange-hi); color: #1C1915; cursor: pointer; }
+.btn:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+.btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); font-weight: 500; }
+.tl-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--sunk); }
+.tl { position: relative; padding: 14px 0 16px 0; }
+.row { position: relative; margin-left: 76px; }
+.rlabel { position: absolute; left: -76px; width: 68px; top: 0; font-size: 12px; color: var(--muted); text-align: right; line-height: 1.3; }
+.ruler { height: 22px; }
+.ruler span { position: absolute; top: 0; font-family: var(--mono); font-size: 11px; color: var(--muted); transform: translateX(-50%); }
+.energy { height: 70px; }
+.energy svg { position: absolute; left: 0; top: 0; }
+.shots { height: 62px; margin-top: 6px; }
+.shot { position: absolute; top: 0; height: 62px; border-radius: 3px; background-size: cover; background-position: center; box-shadow: inset 0 0 0 1px rgba(0,0,0,.35); overflow: hidden; }
+.shot i { position: absolute; left: 4px; bottom: 3px; font-style: normal; font-family: var(--mono); font-size: 10.5px; color: #fff; background: rgba(0,0,0,.6); padding: 0 4px; border-radius: 2px; white-space: nowrap; }
+.shot.on { box-shadow: inset 0 0 0 3px var(--orange-hi); }
+.words { height: 96px; margin-top: 8px; }
+.w { position: absolute; font-family: var(--display); font-weight: 800; font-stretch: 72%; font-size: 15px; color: var(--muted); white-space: nowrap; padding-left: 5px; border-left: 1px solid var(--line); line-height: 1.2; }
+.w.lit { color: var(--orange); border-left-color: var(--orange); }
+.w.end { color: var(--teal); }
+.w.end.lit { color: var(--teal); border-left-color: var(--teal); }
+.w.jandy.lit { color: var(--white-ink); }
+.zone { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, transparent 0 8px, rgba(69,211,198,.08) 8px 16px); }
+.playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--orange-hi); pointer-events: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 12px; height: 3px; margin-right: 6px; vertical-align: middle; background: currentColor; }
+.legend .l1 { color: var(--orange); } .legend .l2 { color: var(--muted); } .legend .l3 { color: var(--teal); }
+
+/* 连线表 */
+.pairs { display: grid; gap: 10px; }
+.pair { display: grid; grid-template-columns: 92px 150px 20px 150px minmax(0, 1fr); gap: 14px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px; }
+.pair img { width: 100%; border-radius: 3px; display: block; }
+.pair .arrow { color: var(--muted); text-align: center; }
+.pair .why { display: grid; gap: 4px; min-width: 0; }
+.pair .lyr { font-family: var(--display); font-weight: 800; font-stretch: 75%; font-size: 17px; color: var(--orange); }
+.pair .blank { aspect-ratio: 16 / 9; border-radius: 3px; background: var(--sunk); display: grid; place-items: center; font-size: 12px; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12px; padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.c-story { color: var(--orange); } .c-word { color: var(--pink); } .c-shot { color: var(--teal); }
+.c-shape { color: var(--fg); } .c-mood { color: var(--muted); } .c-person { color: var(--orange); background: var(--chip-bg); }
+.pair .txt { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* 创新 */
+.inno { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.inno article { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; }
+.inno img { width: 100%; display: block; }
+.inno .bd { padding: 16px 18px 18px; display: grid; gap: 10px; align-content: start; }
+.inno .k { font-size: 12px; color: var(--muted); letter-spacing: .06em; }
+.inno p { font-size: 14.5px; line-height: 1.7; }
+.inno .rule { border-top: 1px solid var(--line); padding-top: 10px; color: var(--orange); font-size: 14px; }
+
+/* 流程 */
+.flow { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; counter-reset: f; }
+.flow li { list-style: none; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; display: grid; gap: 6px; align-content: start; font-size: 14px; line-height: 1.6; }
+.flow li::before { counter-increment: f; content: counter(f); font-family: var(--display); font-weight: 900; font-stretch: 70%; font-size: 26px; line-height: 1; color: var(--orange); }
+.flow .who { font-size: 12px; font-family: var(--mono); color: var(--muted); }
+.flow .who.you { color: var(--teal); }
+.flow ol { padding: 0; margin: 0; display: contents; }
+.lessons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.lesson { border-left: 3px solid var(--line); padding: 4px 0 4px 16px; display: grid; gap: 4px; }
+.lesson b { font-size: 16px; }
+.lesson span { font-size: 14px; color: var(--muted); }
+
+/* 任意歌曲 */
+.pipe { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.pipe div { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 16px; display: grid; gap: 6px; align-content: start; }
+.pipe .tool { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--teal); }
+.pipe b { font-size: 15.5px; }
+.pipe p { font-size: 13.5px; color: var(--muted); line-height: 1.6; }
+.pipe .me .tool { color: var(--orange); }
+.give { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.give div { border: 1px dashed var(--line); border-radius: 6px; padding: 14px 16px; display: grid; gap: 4px; }
+.give b { font-size: 15px; }
+.give span { font-size: 13.5px; color: var(--muted); }
+footer { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); display: grid; gap: 4px; }
+footer code { font-family: var(--mono); font-size: 12px; word-break: break-all; }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; gap: 24px; }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .inno { grid-template-columns: 1fr; }
+  .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pipe { grid-template-columns: 1fr; }
+  .give { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lessons { grid-template-columns: 1fr; }
+  .pair { grid-template-columns: 1fr 1fr; }
+  .pair .tc { grid-column: 1 / -1; }
+  .pair .arrow { display: none; }
+  .pair .why { grid-column: 1 / -1; }
+}
+@media (max-width: 480px) {
+  .steps, .give, .flow { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <p class="eyebrow">jd 拉斯维加斯 MV · 工作复盘</p>
+    <h1><span class="cn">歌词踩点剪辑法</span><span class="en">Lyrics on the beat</span></h1>
+    <p class="lead">17 个素材、一支 23.5 秒的参考片，一次就剪成了成片。这一页把我怎么看素材、怎么拆参考片、怎么配画面、怎么想出创新，一步一步摊开。下次换成你喜欢的歌，也照这个流程做。</p>
+  </div>
+  <figure>
+    <img src="{{check_fool_21.5}}" alt="成片 21.5 秒：巨大的橙色 Fool 字在 Jandy 身后">
+    <figcaption>成片 21.5 秒。"Fool" 这个字在人身后，是这次三个创新里的一个。</figcaption>
+  </figure>
+</header>
+
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">方法总览</p>
+    <h2>四步：看、拆、连、创</h2>
+  </div>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><b>看：给素材写身份卡</b><p>每个素材记下谁、在干嘛、最好的一刻、横竖、形状和颜色。</p></div>
+    <div class="step"><span class="n">2</span><b>拆：把参考片拆成表</b><p>每个镜头记下几秒到几秒、唱什么、意思是什么、拍的是什么。</p></div>
+    <div class="step"><span class="n">3</span><b>连：两张表配对</b><p>按故事、词义、景别、形状去连线，最好的镜头留给高潮。</p></div>
+    <div class="step"><span class="n">4</span><b>创：从麻烦里找创新</b><p>连不上、放不下、会挡脸的地方，正好是做创新的地方。</p></div>
+  </div>
+</section>
+
+<section id="look">
+  <div class="sec-head">
+    <p class="eyebrow">第 1 步 · 看</p>
+    <h2>17 张身份卡</h2>
+    <p class="lead">每段 Live 我抽了 10 张缩略图，一张张看完再填卡。卡填好之前不想镜头怎么排。右上角标了人像还是空镜，你后来说"人像要多"，就是按这个标记调的。</p>
+  </div>
+  <div class="cards" id="cards"></div>
+  <div class="template">
+    <h3>身份卡模板（下次你也可以先填）</h3>
+    <ul>
+      <li><b>谁、在干嘛：</b>一句话，动词要具体。写"回头笑"，不要只写"人"。</li>
+      <li><b>最好的一刻：</b>第几秒到第几秒。Live 只有 3 秒，往往只有 1 秒能用。</li>
+      <li><b>人像还是空镜：</b>决定它能不能扛高潮。</li>
+      <li><b>横还是竖：</b>决定要不要裁、怎么裁。</li>
+      <li><b>形状和颜色：</b>圆的、直线、红的、冷灰的。后面"形状呼应"全靠这一栏。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="split">
+  <div class="sec-head">
+    <p class="eyebrow">第 2 步 · 拆</p>
+    <h2>参考片拆成 11 行</h2>
+    <p class="lead">参考片是《I Love You So》的歌词 MV。它好就好在：歌词一个词一个词跟着唱跳出来，画面跟着句子换。我把它拆成下面这张表，每一行就是一个"空位"，等着放我们的素材。</p>
+  </div>
+  <div class="tablebox">
+    <table>
+      <thead><tr><th>参考片画面</th><th>时间</th><th>唱的词</th><th>意思</th><th>画面类型</th></tr></thead>
+      <tbody id="reftable"></tbody>
+    </table>
+  </div>
+  <p class="note"><b>每个词的时间是怎么来的：</b>参考片的字是橙色的，我让电脑逐帧数画面里橙色像素有多少，数量一跳，就说明有新词出现了。这样测出了 50 多个词的出现时间，误差在 0.05 秒左右。所以这一次其实没有"听懂"音乐，是从参考片里量出来的。要用你自己挑的歌，就得换一种测法，见最后一节。</p>
+</section>
+
+<section id="link">
+  <div class="sec-head">
+    <p class="eyebrow">第 3 步 · 连</p>
+    <h2>两张表配对</h2>
+    <p class="lead">先看整体：下面这条时间轴，上面是参考片，下面是成片，中间是每个词出现的时刻。点"播放"，播放线会按真实速度走一遍。</p>
+  </div>
+  <div class="tl-ctrl">
+    <button class="btn" id="play" type="button">播放</button>
+    <button class="btn ghost" id="reset" type="button">回到开头</button>
+    <span class="tc" id="clock">0.00 s</span>
+  </div>
+  <div class="tl-scroll"><div class="tl" id="tl"></div></div>
+  <div class="legend"><span class="l1">歌词</span><span class="l2">能量曲线（越高越响）和节拍</span><span class="l3">音乐结束后加的结尾一幕</span></div>
+
+  <div class="sec-head" style="margin-top:16px">
+    <h3>每一镜为什么这么配</h3>
+    <p class="muted">标签是配对理由：<span class="chip c-story">故事</span> <span class="chip c-word">词义</span> <span class="chip c-shot">景别</span> <span class="chip c-shape">形状</span> <span class="chip c-mood">情绪</span> <span class="chip c-person">人像要多</span></p>
+  </div>
+  <div class="pairs" id="pairs"></div>
+  <p class="note"><b>最重要的一条：</b>先定故事，再配镜头。歌词是"收拾东西离开你"，结尾那句是"欢迎回到拉斯维加斯"，所以整片是从拉斯维加斯出发、绕一圈美西再回来。开头两镜是 Sphere，结尾一镜也是 Sphere。故事定了，中间每一镜放哪就有了依据。</p>
+</section>
+
+<section id="create">
+  <div class="sec-head">
+    <p class="eyebrow">第 4 步 · 创</p>
+    <h2>三个创新，都是被问题逼出来的</h2>
+    <p class="lead">我没有先想"要做点什么酷的"。每个创新，都是先碰到一个放不下、会挡住、没词可卡的麻烦，再想办法解决。</p>
+  </div>
+  <div class="inno">
+    <article>
+      <img src="{{check_split_6.3}}" alt="三格分屏：公路背影、公路甩头发、机场">
+      <div class="bd">
+        <h3>三格分屏卡词</h3>
+        <p class="k">碰到的麻烦</p><p>有 4 段竖拍素材，放进横屏要裁掉一大半，人会被切掉。</p>
+        <p class="k">怎么解决</p><p>三格竖着并排，唱 Leave、You、Be- 各亮一格，正好一个词一格。</p>
+        <p class="rule">规律：画面切换卡在词上，比卡在鼓点上更有跟唱的感觉。</p>
+      </div>
+    </article>
+    <article>
+      <img src="{{check_fool_21.5}}" alt="Fool 字藏在人身后">
+      <div class="bd">
+        <h3>Fool 藏在人身后</h3>
+        <p class="k">碰到的麻烦</p><p>最好的回头笑镜头，人正好在画面中间。照参考片放一个巨大的 Fool，会挡住脸。</p>
+        <p class="k">怎么解决</p><p>用 AI 抠像工具（rembg）把人一帧一帧抠出来，叠成三层：背景、Fool、人。</p>
+        <p class="rule">规律：字和人有了前后关系，画面就有了纵深。</p>
+      </div>
+    </article>
+    <article>
+      <img src="{{check_end_26.7}}" alt="结尾：Welcome back to Las Vegas, Jandy.">
+      <div class="bd">
+        <h3>结尾手写 Jandy</h3>
+        <p class="k">碰到的麻烦</p><p>音乐 23.5 秒就唱完了，结尾这句话没有歌可以卡，硬加会像另一支片。</p>
+        <p class="k">怎么解决</p><p>还用歌词那种一个词一个词跳出来，只把最后的名字换成白色手写。最后一个音加回声，拖到结尾。</p>
+        <p class="rule">规律：新加的部分沿用前面的做法，只在最后一个词上变。</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="flow">
+  <div class="sec-head">
+    <p class="eyebrow">分工</p>
+    <h2>谁做什么</h2>
+    <p class="lead">方案由我定，体力活交给更便宜的 Sonnet，你只在关键的地方拍板。</p>
+  </div>
+  <ol class="flow">
+    <li><span class="who">我</span>看完全部素材和参考片，填身份卡、拆表、测词时间</li>
+    <li><span class="who">我</span>出镜头表和创新点，写成大白话方案</li>
+    <li><span class="who you">你</span>拍板：横屏、三个创新都要、人像要多</li>
+    <li><span class="who">我</span>把方案和所有规矩写进 PLAN.md</li>
+    <li><span class="who">Sonnet</span>照 PLAN.md 写脚本出片，自己先检查一遍</li>
+    <li><span class="who">我</span>放大到原尺寸验收，没问题再交给你</li>
+  </ol>
+  <div class="sec-head" style="margin-top:12px">
+    <h3>这次能一次过，是因为前几支片踩过的坑都写进了规矩</h3>
+  </div>
+  <div class="lessons">
+    <div class="lesson"><b>素材保持原色，不加滤镜</b><span>上一支 jd 片从 v6 到 v9 越调越糟，结论是你要的就是相机直出的感觉。</span></div>
+    <div class="lesson"><b>不定格，不放太慢</b><span>v1 停顿太多。这次只有两镜轻微放慢（0.87 倍和 0.75 倍），没有定格。</span></div>
+    <div class="lesson"><b>交付前按原尺寸放大看</b><span>只看缩略图会漏掉发白、发糊、抠图毛边。</span></div>
+    <div class="lesson"><b>先锁定认可的版本，只改点名的地方</b><span>大改方向最容易把好的部分也改掉。</span></div>
+  </div>
+</section>
+
+<section id="next">
+  <div class="sec-head">
+    <p class="eyebrow">下一步</p>
+    <h2>换成你喜欢的任意一首歌</h2>
+    <p class="lead">没有参考片的时候，词的时间和节奏要从歌本身测出来。不需要专门的音乐大模型，下面这些本地免费工具就够了，你电脑上都已经装好。</p>
+  </div>
+  <div class="pipe">
+    <div><span class="tool">Demucs</span><b>分开人声和伴奏</b><p>伴奏太响会干扰识别，先把人声单独抽出来。</p></div>
+    <div><span class="tool">Whisper</span><b>对出每个词的时间</b><p>你把歌词文本也给我，它就只负责对时间、不用猜词，准确很多。</p></div>
+    <div><span class="tool">librosa</span><b>找节拍、画能量曲线</b><p>就是上面时间轴最顶上那条线。哪里副歌、哪里最响，一眼能看出来。</p></div>
+    <div class="me"><span class="tool">我</span><b>读懂歌、排镜头</b><p>读歌词意思，看能量曲线，分段、定切点、配素材，写出镜头表。</p></div>
+    <div><span class="tool">Sonnet</span><b>出片</b><p>照镜头表渲染，我验收。流程和这次一样。</p></div>
+  </div>
+  <p class="note"><b>一个要人来判断的地方：</b>librosa 给这首歌测出来是 172 BPM，大概是实际速度的两倍。这种"快一倍或慢一倍"的误差很常见，需要人听一下判断。所以工具测出的数只是草稿，最后我会对着歌听、对着画面看。</p>
+  <div class="sec-head" style="margin-top:8px"><h3>下次你只要准备这四样</h3></div>
+  <div class="give">
+    <div><b>一首歌</b><span>mp3 或视频都行，只截你要的那一段更好。</span></div>
+    <div><b>歌词文本</b><span>从音乐 App 复制下来就行。</span></div>
+    <div><b>一批素材</b><span>Live、视频、照片都可以，重复的我会去掉。</span></div>
+    <div><b>一句想要的感觉</b><span>比如这次的"Welcome back to Las Vegas, Jandy."</span></div>
+  </div>
+</section>
+
+<footer>
+  <span>这次的文件：</span>
+  <code>方案 E:\claude工作区\jd-mv2\PLAN.md</code>
+  <code>脚本 E:\claude工作区\jd-mv2\render.py</code>
+  <code>成片 桌面\jd最新\成片\jd_拉斯维加斯_v1.mp4</code>
+</footer>
+
+</div>
+
+<script>
+const AUDIO = {{audio}};
+const PX = 64, TOTAL = 27.5;
+
+const MATS = [
+  ["L2","{{m_L2}}","橙色 Sphere 全景","城市夜景里一颗发光的橙色大球","全程都稳","空镜","横","圆、暖橙","开场 0 秒"],
+  ["L1","{{m_L1}}","绿野仙踪 Sphere","Sphere 在放《绿野仙踪》","1.0–1.6 秒","空镜","竖","圆、偏暗","Pack 2.6 秒"],
+  ["L6","{{m_L6}}","机场云下","粉色积云下侧身走过","0.3–2.4 秒","人像","横","大块云","things and 3.2 秒"],
+  ["L4","{{m_L4}}","公路背影","纪念碑谷公路上走远，最后回头","全程，2.3 秒回头","人像","竖","一条直路","三格左 5.4 秒"],
+  ["L5","{{m_L5}}","公路转身","先戴墨镜面对镜头，再转身走远","0–0.9 秒正面","人像","竖","一条直路","三格中 + 13.3 秒"],
+  ["L7","{{m_L7}}","机场抬头笑","边走边抬头笑","1.7–2.8 秒","人像","竖","大片天空","三格右 + 19.1 秒"],
+  ["I2","{{m_I2}}","红裤子沙漠","云海前的侧影（照片）","静图","人像","竖","云、红裤子","This feeling's 7.0 秒"],
+  ["L12","{{m_L12}}","阴天峡谷","灰天空下的峡谷湖","全程都稳","空镜","横","冷灰","Old 8.0 秒"],
+  ["I3","{{m_I3}}","红岩云路","云压在红岩上，有公路（照片）","静图","空镜","横","云、路","I know 9.1 秒"],
+  ["L11","{{m_L11}}","湖边走","戴墨镜边走边笑","0.3–2.7 秒","人像","横","人在走","made up my mind 10.0 秒"],
+  ["L10","{{m_L10}}","湖景全景","鲍威尔湖，没有人","全程都稳","空镜","横","像航拍","I hope 12.4 秒"],
+  ["L9","{{m_L9}}","风吹头发","背影，头发被风吹起来","0.5–1.9 秒","人像","横","有动势","What I felt 14.2 秒"],
+  ["L8","{{m_L8}}","湖边侧脸","墨镜侧脸，身后是湖","1.5–2.8 秒","人像","横","蓝湖红岩","shattered 15.6 秒"],
+  ["I1","{{m_I1}}","马蹄湾笑脸","拿着手机笑（照片）","静图","人像","横","峡谷转弯","My soul 16.9 秒"],
+  ["I4","{{m_I4}}","红色圆球","夕阳里的红色 Sphere（截图）","静图","空镜","竖","正圆、红","'Cause you were 18.0 秒"],
+  ["L13","{{m_L13}}","长椅回头笑","长椅上回头对镜头笑，最好的一镜","后段回眸","人像","横","人在正中","Fool 高潮 20.1 秒"],
+  ["L3","{{m_L3}}","Sphere 前侧脸","你在白色 Sphere 前说笑","全程","人像","横","圆 + 人","结尾一幕 23.5 秒"]
+];
+
+const REF = [
+  [0,2.57,"I'm gonna","我要……","空旷田野，开场空镜"],
+  [2.57,5.27,"Pack my things and","收拾我的行李","车站门口的人群"],
+  [5.27,7.97,"Leave you behind · This feeling's","把你留在身后 · 这种感觉","车窗里挥手"],
+  [7.97,9.13,"Old","已经旧了","小巷"],
+  [9.13,10.03,"I know","我知道","亮黄色店面，短镜"],
+  [10.03,12.43,"That I've made up my mind","我已经下定决心","一个人走下台阶"],
+  [12.43,14.17,"I hope you feel","希望你也感受到","海岸航拍"],
+  [14.17,15.57,"What I felt","我感受过的","暗的车内"],
+  [15.57,16.87,"When you shattered","当你击碎","车站大厅"],
+  [16.87,20.13,"My soul · 'Cause you were cruel and I'm a","我的灵魂 · 因为你残忍，而我是个","圆形粉湖航拍"],
+  [20.13,23.53,"Fool, so please let me go","傻瓜，所以求你放我走","街道，一个巨大的 Fool"]
+];
+
+// [开始, 结束, 素材, 歌词, 参考片镜号, 标签, 说明]
+const OURS = [
+  [0,2.57,"L2","I'm gonna",1,["story","shot"],"从拉斯维加斯出发。参考片这里也是开场空镜。"],
+  [2.57,3.20,"L1","Pack",2,["story"],"还在拉斯维加斯。空镜只给 0.6 秒，很快切走。"],
+  [3.20,5.27,"L6","my things and",2,["word","person"],"机场，正好对上收拾行李出发。"],
+  [5.27,7.00,"三格","Leave you behind",3,["word","person"],"背影走远就是把你留在身后。每唱一个词亮一格。"],
+  [7.00,7.97,"I2","This feeling's",3,["person"],"人像侧影，照片做缓慢推近，画面不会停。"],
+  [7.97,9.13,"L12","Old",4,["mood"],"阴天、冷灰，配旧了的感觉。"],
+  [9.13,10.03,"I3","I know",5,["shot"],"参考片这里是一个很短的亮镜头，这里也只给 0.9 秒。"],
+  [10.03,12.43,"L11","That I've made up my mind",6,["shot","person"],"参考片是人走下台阶，这里也是人在走。"],
+  [12.43,13.30,"L10","I hope",7,["shot"],"参考片是航拍，这里换成同样开阔的湖景。"],
+  [13.30,14.17,"L5","you feel",7,["person"],"把空镜切掉一半，插进一个正脸。"],
+  [14.17,15.57,"L9","What I felt",8,["mood","person"],"参考片是暗的车内，这里用背影加风吹头发。"],
+  [15.57,16.87,"L8","When you shattered",9,["person"],"侧脸墨镜，安静的一镜。"],
+  [16.87,18.00,"I1","My soul",10,["person"],"笑脸照片，缓慢推近。"],
+  [18.00,19.07,"I4","'Cause you were",10,["shape"],"参考片是圆形粉湖，这里换成红色圆球，形状呼应。"],
+  [19.07,20.13,"L7","cruel and I'm a",10,["person"],"抬头笑，把参考片的长空镜换成人。"],
+  [20.13,23.53,"L13","Fool, so please let me go",11,["story","person"],"最好的回头笑留给高潮。Fool 放在人身后。"],
+  [23.53,27.50,"L3","Welcome back to Las Vegas, Jandy.",0,["story"],"回到起点。音乐结束后加的一幕。"]
+];
+const OURS_IMG = ["{{o_1}}","{{o_2}}","{{o_3}}","{{o_4}}","{{o_5}}","{{o_6}}","{{o_7}}","{{o_8}}","{{o_9}}","{{o_10}}","{{o_11}}","{{o_12}}","{{o_13}}","{{o_14}}","{{o_15}}","{{o_16}}","{{o_17}}"];
+const REF_IMG = ["{{r_1}}","{{r_2}}","{{r_3}}","{{r_4}}","{{r_5}}","{{r_6}}","{{r_7}}","{{r_8}}","{{r_9}}","{{r_10}}","{{r_11}}"];
+const CHIP = {story:["c-story","故事"],word:["c-word","词义"],shot:["c-shot","景别"],shape:["c-shape","形状"],mood:["c-mood","情绪"],person:["c-person","人像要多"]};
+
+const WORDS = [["I'm",1.77],["gonna",2.07],["Pack",2.67],["my",3.2],["things",4.2],["and",4.7],["Leave",5.37],["you",5.7],["Be-",6.13],["-hind",6.43],["This",7.13],["feeling's",7.47],["old",8.17],["then",8.77],["I know",9.57],["That",10.27],["I've",10.57],["made",10.87],["of",11.07],["my",11.5],["mind",11.87],["I",12.57],["hope",12.87],["you",13.1],["feel",13.57],["What",14.27],["I",14.7],["felt",15.0],["When",15.7],["you",16.0],["shat-",16.27],["-tered",16.63],["my",16.87],["soul",17.27],["'Cause",18.07],["you",18.37],["were",18.67],["cruel",19.07],["and",19.47],["I'm",19.77],["a",19.97],["Fool",20.13],["so",21.17],["please",21.87],["let",22.17],["me",22.47],["go",22.77],["Welcome",23.9,"end"],["back",24.25,"end"],["to",24.6,"end"],["Las Vegas,",24.95,"end"],["Jandy.",25.4,"jandy"]];
+
+const fmt = t => t.toFixed(2);
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+
+// 身份卡
+const cards = document.getElementById("cards");
+MATS.forEach(m => {
+  const c = el("article", "card");
+  c.innerHTML = `<div class="ph"><img src="${m[1]}" alt="${m[2]}" loading="lazy"><span class="code">${m[0]}</span><span class="kind ${m[5]==="人像"?"person":""}">${m[5]}</span></div>
+  <div class="bd"><b>${m[2]}</b><dl><dt>在干嘛</dt><dd>${m[3]}</dd><dt>最好的一刻</dt><dd>${m[4]}</dd><dt>画幅</dt><dd>${m[6]}</dd><dt>形状颜色</dt><dd>${m[7]}</dd></dl><span class="use">用在：${m[8]}</span></div>`;
+  cards.appendChild(c);
+});
+
+// 参考片表
+const rt = document.getElementById("reftable");
+REF.forEach((r, i) => {
+  const tr = el("tr");
+  tr.innerHTML = `<td><img src="${REF_IMG[i]}" alt="参考片第 ${i+1} 镜" loading="lazy"></td><td class="tc">${fmt(r[0])}–${fmt(r[1])}</td><td><span class="lyr">${r[2]}</span></td><td>${r[3]}</td><td class="muted">${r[4]}</td>`;
+  rt.appendChild(tr);
+});
+
+// 配对
+const pairs = document.getElementById("pairs");
+OURS.forEach((o, i) => {
+  const p = el("div", "pair");
+  const ref = o[4] ? `<img src="${REF_IMG[o[4]-1]}" alt="参考片第 ${o[4]} 镜" loading="lazy">` : `<div class="blank">参考片没有，新加</div>`;
+  const chips = o[5].map(k => `<span class="chip ${CHIP[k][0]}">${CHIP[k][1]}</span>`).join("");
+  p.innerHTML = `<span class="tc">${fmt(o[0])}–${fmt(o[1])}<br>${o[2]}</span>${ref}<span class="arrow">→</span><img src="${OURS_IMG[i]}" alt="成片 ${o[2]}" loading="lazy"><div class="why"><span class="lyr">${o[3]}</span><div class="chips">${chips}</div><span class="txt">${o[6]}</span></div>`;
+  pairs.appendChild(p);
+});
+
+// 时间轴
+const tl = document.getElementById("tl");
+const W = Math.ceil(TOTAL * PX);
+tl.style.width = (W + 76 + 24) + "px";
+const row = (cls, label) => { const r = el("div", "row " + cls); r.style.width = W + "px"; if (label) r.appendChild(el("span", "rlabel", label)); tl.appendChild(r); return r; };
+
+const ruler = row("ruler", "");
+for (let s = 0; s <= 27; s += 1) { if (s % 2) continue; const sp = el("span", null, s + "s"); sp.style.left = (s * PX) + "px"; ruler.appendChild(sp); }
+
+const en = row("energy", "能量<br>节拍");
+const H = 70, n = AUDIO.rms.length;
+let d = `M0 ${H}`;
+for (let i = 0; i < n; i++) d += ` L${(i * AUDIO.step * PX).toFixed(1)} ${(H - 4 - AUDIO.rms[i] * (H - 10)).toFixed(1)}`;
+d += ` L${((n - 1) * AUDIO.step * PX).toFixed(1)} ${H} Z`;
+const beats = AUDIO.beats.map(b => `<line x1="${(b*PX).toFixed(1)}" x2="${(b*PX).toFixed(1)}" y1="${H-8}" y2="${H}" stroke="var(--muted)" stroke-width="1"/>`).join("");
+en.innerHTML += `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-label="音乐能量曲线"><path d="${d}" fill="var(--chip-bg)" stroke="var(--orange)" stroke-width="1.5"/>${beats}</svg>`;
+
+const rs = row("shots", "参考片");
+const shotEls = [];
+REF.forEach((r, i) => { const s = el("div", "shot"); s.style.left = (r[0]*PX+1) + "px"; s.style.width = ((r[1]-r[0])*PX-2) + "px"; s.style.backgroundImage = `url(${REF_IMG[i]})`; s.appendChild(el("i", null, "#" + (i+1))); rs.appendChild(s); shotEls.push([r[0], r[1], s]); });
+
+const wr = row("words", "歌词");
+const zone = el("div", "zone"); zone.style.left = (23.53*PX) + "px"; zone.style.width = ((TOTAL-23.53)*PX) + "px"; wr.appendChild(zone);
+const wordEls = [];
+WORDS.forEach((w, i) => { const e = el("span", "w" + (w[2] ? " " + (w[2]==="jandy" ? "end jandy" : "end") : ""), w[0]); e.style.left = (w[1]*PX) + "px"; e.style.top = ((i % 4) * 23 + 2) + "px"; wr.appendChild(e); wordEls.push([w[1], e]); });
+
+const os = row("shots", "成片");
+OURS.forEach((o, i) => { const s = el("div", "shot"); s.style.left = (o[0]*PX+1) + "px"; s.style.width = ((o[1]-o[0])*PX-2) + "px"; s.style.backgroundImage = `url(${OURS_IMG[i]})`; s.appendChild(el("i", null, o[2])); os.appendChild(s); shotEls.push([o[0], o[1], s]); });
+
+const ph = el("div", "playhead"); tl.appendChild(ph);
+const clock = document.getElementById("clock");
+const scroller = document.querySelector(".tl-scroll");
+let t = 0, playing = false, last = 0;
+function draw(follow) {
+  ph.style.left = (76 + t * PX) + "px";
+  clock.textContent = fmt(t) + " s";
+  wordEls.forEach(([wt, e]) => e.classList.toggle("lit", t >= wt));
+  shotEls.forEach(([a, b, s]) => s.classList.toggle("on", t >= a && t < b));
+  if (follow) { const x = 76 + t * PX - scroller.clientWidth * 0.4; if (Math.abs(scroller.scrollLeft - x) > 4) scroller.scrollLeft = x; }
+}
+function tick(now) {
+  if (!playing) return;
+  t += (now - last) / 1000; last = now;
+  if (t >= TOTAL) { t = TOTAL; playing = false; btn.textContent = "播放"; draw(true); return; }
+  draw(true); requestAnimationFrame(tick);
+}
+const btn = document.getElementById("play");
+btn.addEventListener("click", () => {
+  playing = !playing; btn.textContent = playing ? "暂停" : "播放";
+  if (playing) { if (t >= TOTAL) t = 0; last = performance.now(); requestAnimationFrame(tick); }
+});
+document.getElementById("reset").addEventListener("click", () => { playing = false; btn.textContent = "播放"; t = 0; draw(true); });
+tl.addEventListener("click", e => {
+  const rect = tl.getBoundingClientRect(); const x = e.clientX - rect.left - 76;
+  if (x >= 0) { t = Math.min(TOTAL, x / PX); draw(false); }
+});
+t = 20.5; draw(false); t = 20.5;
+</script>
