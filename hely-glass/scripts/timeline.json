@@ -1,0 +1,304 @@
+{
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "frames": 360,
+  "bpm": 80,
+  "cuts": [
+    34,
+    79,
+    124,
+    169,
+    214
+  ],
+  "background": "#e9e9e9",
+  "glass": {
+    "appear": 0.15,
+    "formed": 0.3,
+    "release": 0.95,
+    "gone": 1.22,
+    "diameter": 0.26,
+    "ending_diameter": 0.28,
+    "shape": "vendor squircle",
+    "drift": 0
+  },
+  "lockup": {
+    "width": 0.42,
+    "settled": 10.2,
+    "fade_start": 11.5
+  },
+  "shots": [
+    {
+      "id": 1,
+      "source": "src/clip1_firedance.mp4",
+      "start": 34,
+      "end": 79,
+      "in": 1.06,
+      "speed": [
+        [
+          0,
+          1.0
+        ],
+        [
+          0.15,
+          1.0
+        ],
+        [
+          0.28,
+          0.45
+        ],
+        [
+          0.95,
+          0.45
+        ],
+        [
+          1.12,
+          1.6
+        ],
+        [
+          1.5,
+          1.6
+        ]
+      ],
+      "zoom": [
+        [
+          0,
+          1.0
+        ],
+        [
+          1.5,
+          1.04
+        ]
+      ],
+      "anchor": [
+        0.48,
+        0.46
+      ],
+      "track": [
+        0.42,
+        0.46
+      ],
+      "pan_right": 0.0,
+      "overscan": 1.0,
+      "motion_samples": 1,
+      "deblock": false
+    },
+    {
+      "id": 2,
+      "source": "src/clip2_live_222918.mov",
+      "start": 79,
+      "end": 124,
+      "in": 1.11,
+      "speed": [
+        [
+          0,
+          1
+        ],
+        [
+          0.15,
+          1
+        ],
+        [
+          0.25,
+          0.4
+        ],
+        [
+          1.0,
+          0.4
+        ],
+        [
+          1.1,
+          1
+        ],
+        [
+          1.5,
+          1
+        ]
+      ],
+      "zoom": [
+        [
+          0,
+          1
+        ],
+        [
+          0.275,
+          1
+        ],
+        [
+          0.5,
+          1.28
+        ],
+        [
+          1.125,
+          1.28
+        ],
+        [
+          1.5,
+          1.32
+        ]
+      ],
+      "zoom_ease": "expo",
+      "anchor": [
+        0.73,
+        0.61
+      ],
+      "track": [
+        0.56,
+        0.59
+      ],
+      "interpolate": 72,
+      "sharpen": 0.4
+    },
+    {
+      "id": 3,
+      "source": "gen/shot3v2_take1.mp4",
+      "start": 124,
+      "end": 169,
+      "in": 0.91,
+      "speed": [
+        [
+          0,
+          1.0
+        ],
+        [
+          0.15,
+          1.0
+        ],
+        [
+          0.28,
+          0.45
+        ],
+        [
+          0.95,
+          0.45
+        ],
+        [
+          1.12,
+          1.6
+        ],
+        [
+          1.5,
+          1.6
+        ]
+      ],
+      "zoom": [
+        [
+          0,
+          1
+        ],
+        [
+          0.35,
+          1
+        ],
+        [
+          0.45,
+          1.08
+        ],
+        [
+          1.5,
+          1.08
+        ]
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "track": [
+        0.49,
+        0.64
+      ],
+      "apex_source": 1.2083333333
+    },
+    {
+      "id": 4,
+      "source": "gen/shot4_take3.mp4",
+      "start": 169,
+      "end": 214,
+      "in": 1.13,
+      "speed": [
+        [
+          0,
+          1.0
+        ],
+        [
+          0.15,
+          1.0
+        ],
+        [
+          0.28,
+          0.45
+        ],
+        [
+          0.95,
+          0.45
+        ],
+        [
+          1.12,
+          1.6
+        ],
+        [
+          1.5,
+          1.6
+        ]
+      ],
+      "zoom": [
+        [
+          0,
+          1.08
+        ],
+        [
+          0.375,
+          1.04
+        ],
+        [
+          1.5,
+          1
+        ]
+      ],
+      "anchor": [
+        0.63,
+        0.46
+      ],
+      "track": [
+        0.59,
+        0.5
+      ]
+    }
+  ],
+  "version": 10,
+  "work": "work/v8",
+  "ending": {
+    "glass_start": 7.133333333333334,
+    "solid_mark": 8.4,
+    "text_start": 8.6,
+    "text_settled": 10.2,
+    "hold_end": 12,
+    "fade_start": 11.5
+  },
+  "tune": {
+    "shotScale": 0.72,
+    "shotTile": 610,
+    "shotLook": {
+      "tilt": 0.35,
+      "dispersion": 1.7
+    },
+    "endScale": 0.72,
+    "endTile": 585,
+    "endFinal": 0.62,
+    "endPresent": 0.85,
+    "endLook": {
+      "dispersion": 1.7,
+      "glow": 1.25,
+      "edgeSmear": 2.85,
+      "cornerPull": 2.1,
+      "cornerWidth": 2.2,
+      "cornerFocus": 0.58,
+      "bevelWidth": 0.14,
+      "opticalDepth": 1.1,
+      "tilt": 0.35
+    },
+    "exitFade": true,
+    "vivid": 1.2,
+    "outline": 11
+  }
+}

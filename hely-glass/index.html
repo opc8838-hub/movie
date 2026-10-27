@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>玻璃显标动态语法</title>
+<meta name="description" content="复刻 Apple Music 新视觉发布片：节拍网格、玻璃生命周期、变速、动作对位、冲击波、流体字标。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+<style>
+/* 白底 #e9e9e9 取自片头底色，紫取自 hely 紫点 #958DEE；彩虹渐变只用在"色散"相关的强调上 */
+:root {
+  --bg: #ECECEC; --panel: #FFFFFF; --sunk: #E0E0E0; --fg: #141416; --muted: #5F5F68; --line: #D2D2D6;
+  --accent: #6A60D8; --accent-soft: rgba(106,96,216,.10); --hot: #D8452B; --cool: #1D8FB8;
+  --curve: #6A60D8; --curve2: #9A9AA3;
+  --display: "Archivo", "Bahnschrift", "Arial Narrow", "Microsoft YaHei", sans-serif;
+  --body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "Consolas", ui-monospace, monospace;
+  --rainbow: linear-gradient(90deg, #3B6CFF, #8C5BFF 25%, #FF4FA0 50%, #FF8A3D 75%, #38D6E0);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0B0B0D; --panel: #17171B; --sunk: #050506; --fg: #F1F1F4; --muted: #A0A0AB; --line: #2C2C33;
+  --accent: #A9A2F5; --accent-soft: rgba(169,162,245,.12); --hot: #FF7A5C; --cool: #5BC8EE;
+  --curve: #A9A2F5; --curve2: #6C6C76; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0B0B0D; --panel: #17171B; --sunk: #050506; --fg: #F1F1F4; --muted: #A0A0AB; --line: #2C2C33;
+  --accent: #A9A2F5; --accent-soft: rgba(169,162,245,.12); --hot: #FF7A5C; --cool: #5BC8EE;
+  --curve: #A9A2F5; --curve2: #6C6C76; color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.75;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 72px; }
+.wrap { max-width: 1200px; margin: 0 auto; }
+.prose { max-width: 44rem; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.2; }
+h2 { font-size: clamp(26px, 4vw, 36px); font-weight: 900; }
+h3 { font-size: 18px; font-weight: 700; }
+p { margin: 0; }
+img { display: block; width: 100%; height: auto; border-radius: 6px; background: var(--sunk); }
+a { color: var(--accent); }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.muted { color: var(--muted); }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+section { padding-block: 80px 0; display: grid; gap: 28px; }
+.sec-head { display: grid; gap: 12px; }
+.lead { font-size: 18px; color: var(--muted); max-width: 44rem; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+code { font-family: var(--mono); font-size: .9em; background: var(--sunk); padding: 1px 6px; border-radius: 4px; }
+pre { margin: 0; font-family: var(--mono); font-size: 13px; line-height: 1.6; background: var(--sunk); padding: 14px 16px; border-radius: 8px; overflow-x: auto; }
+
+/* 开场 */
+.hero { padding-block: 64px 0; display: grid; gap: 28px; }
+.hero h1 { font-family: var(--display); font-stretch: 85%; font-size: clamp(40px, 7.5vw, 88px); font-weight: 900; letter-spacing: -.01em; }
+.hero h1 .glass { background: var(--rainbow); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.strip figure, .grid6 figure, .wave figure { margin: 0; display: grid; gap: 6px; }
+figcaption { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.thesis { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.thesis .card h3 { margin-bottom: 8px; }
+.thesis .no { opacity: .75; }
+.thesis .yes { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+
+/* 节拍网格 */
+.beatbar { display: flex; height: 64px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.beatbar div { display: grid; place-items: center; font-size: 13px; font-weight: 700; border-right: 1px solid var(--line); text-align: center; line-height: 1.25; padding: 0 4px; }
+.beatbar div:last-child { border-right: 0; }
+.beatbar .w { background: var(--panel); }
+.beatbar .s { background: var(--accent-soft); }
+.beatbar .k { background: #000; color: #fff; }
+.beatbar small { display: block; font-family: var(--mono); font-weight: 400; font-size: 11px; opacity: .75; }
+.ticks { position: relative; height: 22px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+
+/* 变速实验台 */
+.lab { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.tabs button { font: inherit; font-size: 14px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--fg); cursor: pointer; }
+.tabs button[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.chart { width: 100%; height: auto; display: block; touch-action: none; cursor: ew-resize; }
+.chart text { font-family: var(--mono); font-size: 11px; fill: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--muted); }
+.legend i { display: inline-block; width: 18px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.readout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.readout div { background: var(--sunk); border-radius: 8px; padding: 10px 12px; }
+.readout b { display: block; font-family: var(--mono); font-size: 22px; font-variant-numeric: tabular-nums; }
+.readout span { font-size: 12px; color: var(--muted); }
+.stage { font-size: 15px; min-height: 3.5em; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+
+/* 对位网格 */
+.grid6 { display: grid; grid-template-columns: 80px repeat(6, minmax(0, 1fr)); gap: 8px; align-items: center; }
+.grid6 .rowlabel { font-size: 13px; font-weight: 700; line-height: 1.3; }
+.grid6 .rowlabel small { display: block; font-weight: 400; color: var(--muted); }
+.grid6 .head { font-family: var(--mono); font-size: 12px; color: var(--muted); text-align: center; }
+.grid6 .head b { color: var(--accent); }
+
+.wave { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.params { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; }
+.params div { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.params b { display: block; font-family: var(--mono); font-size: 18px; }
+.params span { font-size: 13px; color: var(--muted); }
+
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.end { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+
+/* 流程 */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; counter-reset: s; }
+.steps li { counter-increment: s; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 6px; align-content: start; }
+.steps li::before { content: counter(s, decimal-leading-zero); font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.steps p { font-size: 14px; color: var(--muted); }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 700; color: var(--muted); font-size: 13px; }
+td.v { font-family: var(--mono); white-space: nowrap; }
+tr.win td { background: var(--accent-soft); font-weight: 700; }
+.tablewrap { overflow-x: auto; }
+
+.rules { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.quote { font-size: clamp(20px, 2.6vw, 26px); font-weight: 700; line-height: 1.55; max-width: 46rem; }
+.quote em { font-style: normal; background: var(--rainbow); -webkit-background-clip: text; background-clip: text; color: transparent; }
+footer { padding-top: 64px; font-size: 14px; color: var(--muted); display: grid; gap: 6px; }
+
+@media (max-width: 860px) {
+  .lab, .thesis, .two { grid-template-columns: minmax(0, 1fr); }
+  .strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .strip figure:nth-child(n+4) { display: none; }
+  .wave { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .end { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid6 .head { display: none; }
+  .grid6 .rowlabel { grid-column: 1 / -1; padding-top: 8px; }
+  .grid6 .c0, .grid6 .c3, .grid6 .c5 { display: none; }
+  .beatbar { height: 56px; }
+  .beatbar div { font-size: 11px; }
+  .beatbar small { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">hely.fun × Apple Music 新视觉复刻 · v12 定稿</div>
+  <h1>玻璃会被用烂，<br><span class="glass">节奏</span>不会。</h1>
+  <p class="lead">全世界都在复刻 Apple Music 的 Liquid Glass（液态玻璃）。我拆完它的发布片，更想学的是另一样东西：logo 在动态影像里怎么出场。这一页把它拆成六条可以量化、可以复用的规则，每个数字都来自这支 12 秒成片。</p>
+  <div class="strip">
+    <figure><img src="guide/img/open_003.jpg" alt="开头：透镜在中间打旋" loading="eager"><figcaption>0.10 s 透镜打旋</figcaption></figure>
+    <figure><img src="guide/img/open_008.jpg" alt="透镜开始横向撑开" loading="eager"><figcaption>0.27 s 横向撑开</figcaption></figure>
+    <figure><img src="guide/img/open_012.jpg" alt="两端出现红蓝色散" loading="eager"><figcaption>0.40 s 两端色散</figcaption></figure>
+    <figure><img src="guide/img/open_017.jpg" alt="字标几乎完整" loading="eager"><figcaption>0.57 s 收拢</figcaption></figure>
+    <figure><img src="guide/img/open_024.jpg" alt="字标定格，背景纯净" loading="eager"><figcaption>0.80 s 定格</figcaption></figure>
+  </div>
+  <div class="thesis">
+    <div class="card no"><h3>大多数人在学的</h3><p class="muted">材质：厚边折射、彩虹色散、水一样的出现和消失。打开着色器调参数就能做出来，所以很快就会到处都是。</p></div>
+    <div class="card yes"><h3>更值得学的</h3><p>语法：剪辑点卡音乐节拍；logo 冲击那一帧画面骤然变慢，玻璃退场后再加速冲进硬切；画面里的动作和 logo 同帧对位；冲击波由深到浅散开。</p></div>
+  </div>
+</header>
+
+<section id="grid">
+  <div class="sec-head">
+    <div class="eyebrow">规则 1 · Beat Grid</div>
+    <h2>剪辑点由节拍决定，不凭感觉</h2>
+    <p class="lead">80 BPM，每个镜头 2 拍 = 1.5 秒，到点硬切。切点用 <code>scene&gt;0.25</code> 测出，再按录屏每帧的真实时间戳核对。</p>
+  </div>
+  <div>
+    <div class="beatbar" role="img" aria-label="12 秒时间轴：开头字标 1.13 秒，四个镜头各 1.5 秒，黑场和结尾字标 4.87 秒">
+      <div class="w" style="flex:1.133">字标<small>34f</small></div>
+      <div class="s" style="flex:1.5">① 篝火<small>45f</small></div>
+      <div class="s" style="flex:1.5">② 湖边<small>45f</small></div>
+      <div class="s" style="flex:1.5">③ 滑板<small>45f</small></div>
+      <div class="s" style="flex:1.5">④ 花店<small>45f</small></div>
+      <div class="k" style="flex:4.867">黑场玻璃 → 结尾字标<small>146f</small></div>
+    </div>
+    <div class="ticks" id="ticks"></div>
+  </div>
+</section>
+
+<section id="ramp">
+  <div class="sec-head">
+    <div class="eyebrow">规则 2 + 3 · Glass Lifecycle × Speed Ramp</div>
+    <h2>冲击帧放慢，退场后加速</h2>
+    <p class="lead">每个镜头里，玻璃都走同一条时间线。用光流量参考片发现：画面速度跟着玻璃的节点走。拖动曲线，看每个时刻发生了什么。</p>
+  </div>
+  <div class="tabs" role="group" aria-label="选择镜头">
+    <button type="button" data-shot="1" aria-pressed="true">① 篝火 · 强</button>
+    <button type="button" data-shot="2" aria-pressed="false">② 湖边 · 轻</button>
+    <button type="button" data-shot="3" aria-pressed="false">③ 滑板 · 中</button>
+    <button type="button" data-shot="4" aria-pressed="false">④ 花店 · 中</button>
+  </div>
+  <div class="lab">
+    <div class="card" style="display:grid;gap:12px">
+      <svg class="chart" id="chart" viewBox="0 0 640 300" role="img" aria-label="镜头内速度和缩放曲线"></svg>
+      <input type="range" id="slider" min="0" max="1.5" step="0.01" value="0.5" aria-label="镜头内时间 r">
+      <div class="legend"><span><i style="background:var(--curve)"></i>播放速度（×）</span><span><i style="background:var(--curve2)"></i>推拉缩放</span><span><i style="background:var(--hot);height:10px;width:3px"></i>玻璃节点</span></div>
+    </div>
+    <div style="display:grid;gap:12px">
+      <img id="frame" src="guide/img/s1_r050.jpg" alt="当前时刻的成片画面">
+      <div class="readout">
+        <div><b id="ro-r">0.50</b><span>镜头内 r（秒）</span></div>
+        <div><b id="ro-v">0.30×</b><span>播放速度</span></div>
+        <div><b id="ro-z">1.08</b><span>缩放</span></div>
+      </div>
+      <p class="stage" id="stage"></p>
+    </div>
+  </div>
+  <pre>慢动作必须插帧，否则一卡一卡：
+minterpolate=fps=120:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1</pre>
+</section>
+
+<section id="sync">
+  <div class="sec-head">
+    <div class="eyebrow">规则 4 + 5 · Action Sync × Dolly</div>
+    <h2>logo 像是被画面里的动作撞出来的</h2>
+    <p class="lead">入点不靠感觉挑：用光流算出素材每帧的运动量，滑动一个 1.5 秒的窗口打分，选动作起点刚好落在 r = 0.15 和 0.75 的那段。logo 始终固定在画面正中，不漂移、不跟拍。</p>
+  </div>
+  <div class="grid6" id="syncgrid"></div>
+</section>
+
+<section id="wave">
+  <div class="sec-head">
+    <div class="eyebrow">规则 6a · Shockwave</div>
+    <h2>一次一道波，往外走，由深到浅</h2>
+    <p class="lead">方砖成形后，右侧发出一片薄玻璃：两条挨得很近的亮弧，中间把背景折射错位。出边时快，越走越慢，越走越淡；隔 0.2 秒再发一道更淡的。这一项改了 5 版，直到把参考片逐帧去重、平铺、高通放大才看清。</p>
+  </div>
+  <div class="wave">
+    <figure><img src="guide/img/wave_r047.jpg" alt="r 0.47 波尚未发出" loading="lazy"><figcaption>r 0.47 未发</figcaption></figure>
+    <figure><img src="guide/img/wave_r053.jpg" alt="r 0.53 第一道波出边" loading="lazy"><figcaption>r 0.53 出边</figcaption></figure>
+    <figure><img src="guide/img/wave_r060.jpg" alt="r 0.60 往外走" loading="lazy"><figcaption>r 0.60 外走</figcaption></figure>
+    <figure><img src="guide/img/wave_r070.jpg" alt="r 0.70 变淡，第二道发出" loading="lazy"><figcaption>r 0.70 第二道</figcaption></figure>
+    <figure><img src="guide/img/wave_r080.jpg" alt="r 0.80 继续散开" loading="lazy"><figcaption>r 0.80 散开</figcaption></figure>
+    <figure><img src="guide/img/wave_r090.jpg" alt="r 0.90 几乎消失" loading="lazy"><figcaption>r 0.90 消失</figcaption></figure>
+  </div>
+  <div class="params">
+    <div><b>r 0.50 / 0.70</b><span>两次发波，强度 1.0 / 0.55</span></div>
+    <div><b>0.36 方砖宽</b><span>走出的距离，用时 0.5 秒</span></div>
+    <div><b>1 − (1−p)<sup>2.4</sup></b><span>运动：出边快、越走越慢</span></div>
+    <div><b>(1−p)<sup>1.6</sup></b><span>透明度：由深到浅</span></div>
+    <div><b>20 px</b><span>两弧之间的折射错位</span></div>
+  </div>
+</section>
+
+<section id="wordmark">
+  <div class="sec-head">
+    <div class="eyebrow">规则 6b · Fluid Wordmark</div>
+    <h2>字标：中间打旋，向两边撑开，两端 RGB 分离</h2>
+    <p class="lead">字始终水平，只有透镜里的内容在转。撑开时 R、G、B 三个通道分别拉长，左端偏蓝紫，右端偏红青，形成色散（Chromatic Aberration）。0.6 秒后背景必须逐像素纯净。</p>
+  </div>
+  <div class="two">
+    <figure style="margin:0;display:grid;gap:6px"><img src="guide/img/plain_open_010.jpg" alt="开头 0.33 秒的正常画面" loading="lazy"><figcaption>0.33 s 正常看</figcaption></figure>
+    <figure style="margin:0;display:grid;gap:6px"><img src="guide/img/hp_open_010.jpg" alt="同一帧做高通增强后，看得见括号形震动波" loading="lazy"><figcaption>同一帧，高通 ×10：括号形震动波 "( )" 现形</figcaption></figure>
+  </div>
+  <p class="muted prose">看不清的细节，先换个方法看：灰度减去高斯模糊再放大 8 到 14 倍，淡波纹、柔光泡、灰边全都露出来。拆参考、验自己都用这一招。</p>
+  <div class="end">
+    <figure style="margin:0;display:grid;gap:6px"><img src="guide/img/end_224.jpg" alt="黑场玻璃，斜面有彩虹" loading="lazy"><figcaption>7.47 s 黑场玻璃</figcaption></figure>
+    <figure style="margin:0;display:grid;gap:6px"><img src="guide/img/end_262.jpg" alt="结尾小透镜" loading="lazy"><figcaption>8.73 s 小透镜</figcaption></figure>
+    <figure style="margin:0;display:grid;gap:6px"><img src="guide/img/end_272.jpg" alt="结尾字标撑开" loading="lazy"><figcaption>9.07 s 撑开</figcaption></figure>
+    <figure style="margin:0;display:grid;gap:6px"><img src="guide/img/end_320.jpg" alt="结尾字标定格" loading="lazy"><figcaption>10.67 s 定格</figcaption></figure>
+  </div>
+</section>
+
+<section id="pipeline">
+  <div class="sec-head">
+    <div class="eyebrow">详细做法</div>
+    <h2>从素材到成片，八步</h2>
+  </div>
+  <ol class="steps">
+    <li><h3>拆参考</h3><p>裁出 16:9 画面，解出每帧真实时间，测切点、方砖大小、变速曲线。高通和去重平铺看细节。</p></li>
+    <li><h3>logo 矢量化</h3><p>不抠 JPEG。圆拟合正圆，h 用矩形 + 圆弧拼，字标用 potrace 描轮廓再拉直。IoU 0.9886。</p></li>
+    <li><h3>选入点</h3><p>Farneback 光流 + 1.5 秒滑窗打分，动作起点落在 r 0.15 / 0.75。</p></li>
+    <li><h3>变速 + 推拉</h3><p>插帧到 120fps，按速度曲线积分取样，套缩放矩阵；冲刺段叠 3 子帧运动模糊。</p></li>
+    <li><h3>玻璃渲染</h3><p>开源 WebGL 内核（MIT），光学数值不动，只加视频背景折射。Playwright 逐帧渲染。</p></li>
+    <li><h3>后处理</h3><p>按每帧导出的方砖尺寸画两侧冲击波；字标透镜用 cv2.remap 做漩涡和 RGB 拉长。</p></li>
+    <li><h3>声音</h3><p>代码合成 80 BPM：切点底鼓、水滴玻璃铃、冲刺"呼"、车呼啸随声像移动。</p></li>
+    <li><h3>编码 + 验收</h3><p>lanczos + accurate_rnd + full_chroma_int + bt709（不加白底发黄）。每段和参考同一时刻并排看。</p></li>
+  </ol>
+</section>
+
+<section id="retro">
+  <div class="sec-head">
+    <div class="eyebrow">12 版迭代</div>
+    <h2>每一版被否在哪</h2>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>版本</th><th>意见</th><th>教训</th></tr></thead>
+      <tbody>
+        <tr><td class="v">v1</td><td>图标漂移、折射不够、篝火卡顿</td><td>执行者会自己"优化"光学，方案里要写死</td></tr>
+        <tr><td class="v">v2</td><td>字标左右摇，看不清就切走了</td><td>苹果字标是透镜展开，不是方砖玻璃</td></tr>
+        <tr><td class="v">v3</td><td>玻璃没彩虹</td><td>执行者为了"干净"偷偷降色散</td></tr>
+        <tr><td class="v">v5</td><td>滑板 logo 不要跟人动</td><td>logo 永远固定正中</td></tr>
+        <tr><td class="v">v6</td><td>篝火被放大糊了</td><td>素材用完整画面，按光流踩点</td></tr>
+        <tr><td class="v">v7</td><td>震动那一刻要慢动作</td><td>变速规律要量出来</td></tr>
+        <tr><td class="v">v8</td><td>开头有灰，篝火要推拉</td><td>背景逐像素纯净</td></tr>
+        <tr><td class="v">v9–10</td><td>"还不如 v8"</td><td>没看清就改，越改越偏</td></tr>
+        <tr><td class="v">v11</td><td>进步很多，但没散开、太密</td><td>"厚重"= 线粗 + 辉光 + 玻璃体</td></tr>
+        <tr class="win"><td class="v">v12</td><td>"总算做出来了"</td><td>一次一道，往外走，由深到浅</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:10px">写成规矩的坑</h3>
+    <ul class="rules">
+      <li>光学数值写死，不准降；改完和原版逐像素比颜色浓度</li>
+      <li>logo 固定正中，不漂移、不摇摆、不跟拍</li>
+      <li>素材不放大裁切、不改色；生成镜头的质感只做到"刚好"</li>
+      <li>慢动作必须插帧</li>
+      <li>看不清就换方法看（高通、去重平铺、光流），再动参数</li>
+      <li>锁住认可的版本，只改点名的帧</li>
+    </ul>
+  </div>
+</section>
+
+<section id="takeaway">
+  <div class="eyebrow">沉淀</div>
+  <p class="quote">玻璃是皮肤，<em>节拍网格 + 变速 + 动作对位 + 冲击波</em>才是骨架。骨架换上任何品牌的 logo 和画面都成立，可以直接用进之后的 TVC 和品牌广告。</p>
+  <p class="muted prose">换品牌、换素材、换 BPM 的通用规格见 <a href="PLAN.md">PLAN.md</a>；完整方法和文件说明见 <a href="README.md">README.md</a>；每一版的修改单见 <a href="plans/">plans/</a>。</p>
+</section>
+
+<footer>
+  <span>画面全部来自我们自己的成片；参考片只用于测量，不在本页和仓库里。</span>
+  <span>玻璃光学内核：zanwei/glass-icon-reveal（MIT，Zanwei Guo）。</span>
+  <span><a href="../">← 返回 movie 目录</a></span>
+</footer>
+</div>
+
+<script>
+(function () {
+  // 时间轴刻度
+  const T = 12, ticks = document.getElementById('ticks');
+  [[0, '0'], [1.133, '1.13'], [2.633, '2.63'], [4.133, '4.13'], [5.633, '5.63'], [7.133, '7.13'], [12, '12 s']].forEach(([t, l]) => {
+    const s = document.createElement('span'); s.textContent = l; s.style.left = (t / T * 100) + '%';
+    if (t === 0) s.style.transform = 'none'; if (t === 12) s.style.transform = 'translateX(-100%)';
+    ticks.appendChild(s);
+  });
+
+  const sm = x => { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
+  // 速度点列（取自 timeline.json / prep_v8.py），点之间 smoothstep
+  const piece = pts => r => {
+    for (let i = 0; i < pts.length - 1; i++) {
+      const [a, va] = pts[i], [b, vb] = pts[i + 1];
+      if (r <= b) return va + (vb - va) * sm((r - a) / (b - a));
+    }
+    return pts[pts.length - 1][1];
+  };
+  const SHOTS = {
+    1: { name: '篝火', speed: piece([[0, 1.2], [0.13, 1.2], [0.20, 0.30], [0.90, 0.30], [1.05, 2.0], [1.5, 2.0]]),
+         zoom: r => r < 0.15 ? 1 + 0.10 * (1 - Math.pow(1 - r / 0.15, 3)) : r < 0.90 ? 1.10 - 0.08 * sm((r - 0.15) / 0.75) : 1.02 + 0.18 * Math.pow(Math.min((r - 0.90) / 0.60, 1), 3),
+         beats: { 0.15: '刀举起', 0.75: '锣举起', 1.0: '面具正对镜头' } },
+    2: { name: '湖边', speed: piece([[0, 1], [0.15, 1], [0.25, 0.4], [1.0, 0.4], [1.1, 1], [1.5, 1]]),
+         zoom: piece([[0, 1], [0.275, 1], [0.5, 1.28], [1.125, 1.28], [1.5, 1.32]]),
+         beats: { 0.375: '头发扬到最大，猛推近' } },
+    3: { name: '滑板', speed: piece([[0, 1], [0.15, 1], [0.28, 0.45], [0.95, 0.45], [1.12, 1.6], [1.5, 1.6]]),
+         zoom: piece([[0, 1], [0.35, 1], [0.45, 1.08], [1.5, 1.08]]),
+         beats: { 0.15: '起跳', 0.30: '跳到最高点' } },
+    4: { name: '花店', speed: piece([[0, 1], [0.15, 1], [0.28, 0.45], [0.95, 0.45], [1.12, 1.6], [1.5, 1.6]]),
+         zoom: piece([[0, 1.08], [0.375, 1.04], [1.5, 1]]),
+         beats: { 0.8: '车进画，横向动态模糊', 1.5: '硬切纯黑，不擦黑' } }
+  };
+  const NODES = [[0.15, '水滴落下'], [0.30, '成形'], [0.95, '退场'], [1.22, '消失'], [1.5, '硬切']];
+  const FR = [0.07, 0.20, 0.50, 0.80, 1.05, 1.40];
+  const stageText = r => {
+    if (r < 0.15) return '只有画面，还没有玻璃。画面按正常或略快的速度进场。';
+    if (r < 0.30) return '冲击帧：水滴落下、logo 震动，画面骤然放慢。水滴长成圆角方砖，斜面出现彩虹色散。';
+    if (r < 0.95) return '方砖停在正中，整段是慢动作。r 0.50 和 0.70 两侧各发出一道冲击波，往外走、由深到浅。';
+    if (r < 1.22) return '玻璃退场，画面开始加速。留下干净的白色 h。';
+    return '加速冲刺，冲进 r = 1.5 的硬切。';
+  };
+
+  const svg = document.getElementById('chart'), slider = document.getElementById('slider');
+  const W = 640, H = 300, L = 44, R = 16, TOP = 22, B = 34;
+  const x = r => L + r / 1.5 * (W - L - R), y = v => TOP + (1 - v / 2.2) * (H - TOP - B);
+  const zy = z => TOP + (1 - (z - 0.9) / 0.5) * (H - TOP - B);
+  let shot = 1;
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (n, a, txt) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; };
+
+  function draw() {
+    const S = SHOTS[shot]; svg.textContent = '';
+    for (const v of [0.5, 1, 1.5, 2]) {
+      svg.appendChild(el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: 'var(--line)', 'stroke-width': 1 }));
+      svg.appendChild(el('text', { x: L - 8, y: y(v) + 4, 'text-anchor': 'end' }, v + '×'));
+    }
+    // 慢动作区底色
+    const slow = shot === 1 ? [0.20, 0.90] : shot === 2 ? [0.25, 1.0] : [0.28, 0.95];
+    svg.appendChild(el('rect', { x: x(slow[0]), y: TOP, width: x(slow[1]) - x(slow[0]), height: H - TOP - B, fill: 'var(--accent-soft)' }));
+    svg.appendChild(el('text', { x: (x(slow[0]) + x(slow[1])) / 2, y: TOP + 14, 'text-anchor': 'middle', style: 'fill:var(--accent)' }, '慢动作'));
+    NODES.forEach(([r, l], i) => {
+      svg.appendChild(el('line', { x1: x(r), x2: x(r), y1: TOP, y2: H - B, stroke: 'var(--hot)', 'stroke-width': 1, 'stroke-dasharray': '3 3', opacity: .7 }));
+      svg.appendChild(el('text', { x: x(r), y: H - B + 14 + (i % 2) * 12, 'text-anchor': r >= 1.5 ? 'end' : 'middle' }, r + ' ' + l));
+    });
+    let dz = '', dv = '';
+    for (let i = 0; i <= 150; i++) { const r = i / 100; dv += (i ? 'L' : 'M') + x(r).toFixed(1) + ' ' + y(S.speed(r)).toFixed(1); dz += (i ? 'L' : 'M') + x(r).toFixed(1) + ' ' + zy(S.zoom(r)).toFixed(1); }
+    svg.appendChild(el('path', { d: dz, fill: 'none', stroke: 'var(--curve2)', 'stroke-width': 2, 'stroke-dasharray': '6 4' }));
+    svg.appendChild(el('path', { d: dv, fill: 'none', stroke: 'var(--curve)', 'stroke-width': 3, 'stroke-linejoin': 'round' }));
+    svg.appendChild(el('line', { id: 'cursor', x1: 0, x2: 0, y1: TOP, y2: H - B, stroke: 'var(--fg)', 'stroke-width': 1.5 }));
+    svg.appendChild(el('circle', { id: 'dot', r: 6, fill: 'var(--curve)', stroke: 'var(--panel)', 'stroke-width': 2 }));
+    update();
+  }
+  function update() {
+    const r = +slider.value, S = SHOTS[shot];
+    const c = svg.querySelector('#cursor'), d = svg.querySelector('#dot');
+    c.setAttribute('x1', x(r)); c.setAttribute('x2', x(r)); d.setAttribute('cx', x(r)); d.setAttribute('cy', y(S.speed(r)));
+    document.getElementById('ro-r').textContent = r.toFixed(2);
+    document.getElementById('ro-v').textContent = S.speed(r).toFixed(2) + '×';
+    document.getElementById('ro-z').textContent = S.zoom(r).toFixed(2);
+    const near = FR.reduce((a, b) => Math.abs(b - r) < Math.abs(a - r) ? b : a);
+    const img = document.getElementById('frame');
+    img.src = `guide/img/s${shot}_r${String(Math.round(near * 100)).padStart(3, '0')}.jpg`;
+    img.alt = `镜头${shot} ${S.name}，r ${near} 的成片画面`;
+    const beat = Object.entries(S.beats).find(([k]) => Math.abs(+k - r) < 0.06);
+    document.getElementById('stage').textContent = stageText(r) + (beat ? ' 画面动作：' + beat[1] + '。' : '');
+  }
+  slider.addEventListener('input', update);
+  const seek = e => { const b = svg.getBoundingClientRect(); const px = (e.clientX - b.left) / b.width * W; slider.value = Math.min(1.5, Math.max(0, (px - L) / (W - L - R) * 1.5)); update(); };
+  let drag = false;
+  svg.addEventListener('pointerdown', e => { drag = true; svg.setPointerCapture(e.pointerId); seek(e); });
+  svg.addEventListener('pointermove', e => { if (drag) seek(e); });
+  svg.addEventListener('pointerup', () => { drag = false; });
+  document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+    shot = +b.dataset.shot; document.querySelectorAll('.tabs button').forEach(o => o.setAttribute('aria-pressed', o === b)); draw();
+  }));
+  draw();
+
+  // 对位网格
+  const g = document.getElementById('syncgrid');
+  const heads = ['r 0.07 进场', 'r 0.20 <b>冲击</b>', 'r 0.50 慢动作', 'r 0.80 冲击波', 'r 1.05 退场', 'r 1.40 冲刺'];
+  g.insertAdjacentHTML('beforeend', '<div></div>' + heads.map(h => `<div class="head">${h}</div>`).join(''));
+  const rows = [[1, '① 篝火', '刀 · 锣 · 面具'], [2, '② 湖边', '头发 + 猛推'], [3, '③ 滑板', '起跳 · 最高点'], [4, '④ 花店', '车进画 → 硬切']];
+  rows.forEach(([s, n, d]) => {
+    g.insertAdjacentHTML('beforeend', `<div class="rowlabel">${n}<small>${d}</small></div>` +
+      FR.map((r, k) => `<figure class="c${k}"><img src="guide/img/s${s}_r${String(Math.round(r * 100)).padStart(3, '0')}.jpg" alt="${n} r ${r}" loading="lazy"></figure>`).join(''));
+  });
+})();
+</script>
+</body>
+</html>

@@ -2,11 +2,14 @@
 
 用 AI 剪片的工作方法笔记。每支片一个文件夹，里面放方案、脚本和复盘。
 
-**在线学习页：** https://opc8838-hub.github.io/movie/ （可播放的时间轴、17 张素材身份卡、逐镜配对理由）
+**在线学习页：**
+- jd 拉斯维加斯歌词 MV：https://opc8838-hub.github.io/movie/ （可播放的时间轴、17 张素材身份卡、逐镜配对理由）
+- hely 玻璃显标片：https://opc8838-hub.github.io/movie/hely-glass/ （可拖动的变速曲线、玻璃生命周期、冲击波逐帧）
 
 | 片子 | 文件夹 | 一句话 |
 |---|---|---|
 | jd 拉斯维加斯歌词 MV | [jd-lasvegas](jd-lasvegas/) | 复刻《I Love You So》逐词跳字 MV，17 个旅行素材，一次通过 |
+| hely 玻璃显标片 | [hely-glass](hely-glass/) | 复刻 Apple Music 新视觉发布片：节拍网格 + 冲击帧变速 + 动作对位 + 冲击波，12 版迭代定稿 |
 
 ---
 
