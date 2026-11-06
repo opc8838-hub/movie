@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>东莞国贸路口 · B2W Studio</title>
+<meta name="description" content="一个真实路口的微缩世界，轴测视角，四章 30 秒。">
+<meta name="theme-color" content="#000000">
+<meta property="og:title" content="东莞国贸路口 · B2W Studio">
+<meta property="og:description" content="一个真实路口的微缩世界，轴测视角，四章 30 秒。">
+<meta property="og:image" content="https://opc8838-hub.github.io/movie/media/dg-guomao.jpg">
+<link rel="icon" href="../assets/favicon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<header class="bar">
+  <a class="home" href="../index.html" aria-label="B2W Studio 首页"><img src="../assets/mark-white.png" alt="" width="28" height="26"><span>STUDIO</span></a>
+  <nav aria-label="主导航"><a href="../index.html#works" aria-current="page">作品</a><a href="../handbook/index.html">手册</a><a href="../index.html#methods">方法</a></nav>
+</header>
+<main id="main">
+<section class="screen"><video controls playsinline preload="metadata" poster="../media/dg-guomao.jpg" src="../media/dg-guomao.mp4" width="1080" height="1080"></video></section>
+<section class="info">
+  <div><h1>东莞国贸路口</h1><p class="en">Guomao Crossroad</p><dl class="facts"><dt>类型</dt><dd>代码动效</dd><dt>性质</dt><dd>复刻练习</dd><dt>时间</dt><dd>2026-10</dd><dt>版本</dt><dd>v1</dd><dt>规格</dt><dd>0:30 · 1080×1080</dd></dl></div>
+  <div class="body">
+    <p class="summary">一个真实路口的微缩世界，轴测视角，四章 30 秒。</p>
+    <section><h2>怎么做的</h2><ul><li>路网和建筑按真实数据简化</li><li>样帧出了三轮，通过后才做整片</li></ul></section>
+    <section><h2>学到了什么</h2><p>先看样帧，整片就顺利。</p></section>
+    <section class="note"><h2>注明</h2><p>画风学自 Eian（@EianLu）的孟菲斯微缩世界。</p></section>
+    <p class="more"><a href="https://x.com/EianLu" target="_blank" rel="noopener">Eian 的 X 主页 ↗</a></p>
+  </div>
+</section>
+
+<nav class="pager" aria-label="上一个和下一个作品"><a href="illust-portal.html"><small>← 上一个</small>插画立体世界</a><a href="fairy-linda.html"><small>下一个 →</small>FAIRY LINDA 羊毛打底衫</a></nav>
+</main>
+<div class="foot-logo" id="footLogo"><video muted playsinline preload="auto" src="../assets/logo-write-light.mp4" aria-hidden="true"></video><img src="../assets/logo-black.png" alt="Back 2 Work Studio" width="1244" height="280"></div>
+<footer class="colophon">
+  <p>部分作品是学习和练习，参考了别人的结构和节奏，个别还用了原片音乐。每支片都在作品页写明，相关权利归原作者。如需修改或移除，请<a href="https://github.com/opc8838-hub/movie/issues">在 GitHub 联系我们</a>。</p>
+  <p class="r">B2W Studio · 2026<br>设计 · 视频 · 动效</p>
+</footer>
+<script>
+(function(){var w=document.getElementById('footLogo');if(!w)return;var v=w.querySelector('video');
+if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){w.classList.add('static');return;}
+new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){o.disconnect();var p=v.play();if(p)p.catch(function(){w.classList.add('static');});}});},{threshold:.5}).observe(v);})();
+</script>
+
+</body>
+</html>

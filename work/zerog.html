@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>三星堆无重力翻转 · B2W Studio</title>
+<meta name="description" content="爆炸图合体，绕竖轴转一圈，然后每 0.65 秒硬切一件文物。">
+<meta name="theme-color" content="#000000">
+<meta property="og:title" content="三星堆无重力翻转 · B2W Studio">
+<meta property="og:description" content="爆炸图合体，绕竖轴转一圈，然后每 0.65 秒硬切一件文物。">
+<meta property="og:image" content="https://opc8838-hub.github.io/movie/media/zerog.jpg">
+<link rel="icon" href="../assets/favicon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<header class="bar">
+  <a class="home" href="../index.html" aria-label="B2W Studio 首页"><img src="../assets/mark-white.png" alt="" width="28" height="26"><span>STUDIO</span></a>
+  <nav aria-label="主导航"><a href="../index.html#works" aria-current="page">作品</a><a href="../handbook/index.html">手册</a><a href="../index.html#methods">方法</a></nav>
+</header>
+<main id="main">
+<section class="screen"><video controls playsinline preload="metadata" poster="../media/zerog.jpg" src="../media/zerog.mp4" width="1920" height="1080"></video></section>
+<section class="info">
+  <div><h1>三星堆无重力翻转</h1><p class="en">Zero-G Flip</p><dl class="facts"><dt>类型</dt><dd>代码动效</dd><dt>性质</dt><dd>复刻练习</dd><dt>时间</dt><dd>2026-10</dd><dt>版本</dt><dd>v1</dd><dt>规格</dt><dd>0:06 · 1920×1080</dd></dl></div>
+  <div class="body">
+    <p class="summary">爆炸图合体，绕竖轴转一圈，然后每 0.65 秒硬切一件文物。</p>
+    <section><h2>怎么做的</h2><ul><li>WebGL 渲染，从单张图算厚度和背面</li><li>时间轴参数集中放，切换全部硬切</li></ul></section>
+    <section><h2>学到了什么</h2><p>单张图算厚度只适合扁的东西，后来用在床上就不行了。</p></section>
+    <section class="note"><h2>注明</h2><p>动效复刻苹果 iPhone 16 Pro 宣传片。无声。</p></section>
+    
+  </div>
+</section>
+
+<nav class="pager" aria-label="上一个和下一个作品"><a href="self-love.html"><small>← 上一个</small>Self Love 歌词短片</a><a href="hely-thermal.html"><small>下一个 →</small>hely 热感标识</a></nav>
+</main>
+<div class="foot-logo" id="footLogo"><video muted playsinline preload="auto" src="../assets/logo-write-light.mp4" aria-hidden="true"></video><img src="../assets/logo-black.png" alt="Back 2 Work Studio" width="1244" height="280"></div>
+<footer class="colophon">
+  <p>部分作品是学习和练习，参考了别人的结构和节奏，个别还用了原片音乐。每支片都在作品页写明，相关权利归原作者。如需修改或移除，请<a href="https://github.com/opc8838-hub/movie/issues">在 GitHub 联系我们</a>。</p>
+  <p class="r">B2W Studio · 2026<br>设计 · 视频 · 动效</p>
+</footer>
+<script>
+(function(){var w=document.getElementById('footLogo');if(!w)return;var v=w.querySelector('video');
+if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){w.classList.add('static');return;}
+new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){o.disconnect();var p=v.play();if(p)p.catch(function(){w.classList.add('static');});}});},{threshold:.5}).observe(v);})();
+</script>
+
+</body>
+</html>

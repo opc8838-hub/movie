@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QUIET HOURS · B2W Studio</title>
+<meta name="description" content="34 秒、121 张杂志海报踩拍快闪，从早到晚走过东京，四套高级女装。">
+<meta name="theme-color" content="#000000">
+<meta property="og:title" content="QUIET HOURS · B2W Studio">
+<meta property="og:description" content="34 秒、121 张杂志海报踩拍快闪，从早到晚走过东京，四套高级女装。">
+<meta property="og:image" content="https://opc8838-hub.github.io/movie/media/quiet-hours.jpg">
+<link rel="icon" href="../assets/favicon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<header class="bar">
+  <a class="home" href="../index.html" aria-label="B2W Studio 首页"><img src="../assets/mark-white.png" alt="" width="28" height="26"><span>STUDIO</span></a>
+  <nav aria-label="主导航"><a href="../index.html#works" aria-current="page">作品</a><a href="../handbook/index.html">手册</a><a href="../index.html#methods">方法</a></nav>
+</header>
+<main id="main">
+<section class="screen"><video controls playsinline preload="metadata" poster="../media/quiet-hours.jpg" src="../media/quiet-hours.mp4" width="1080" height="1350"></video></section>
+<section class="info">
+  <div><h1>QUIET HOURS</h1><p class="en">东京女装海报快闪</p><dl class="facts"><dt>类型</dt><dd>设计</dd><dt>性质</dt><dd>原创</dd><dt>时间</dt><dd>2026-10</dd><dt>版本</dt><dd>v1</dd><dt>规格</dt><dd>0:34 · 1080×1350</dd></dl></div>
+  <div class="body">
+    <p class="summary">34 秒、121 张杂志海报踩拍快闪，从早到晚走过东京，四套高级女装。</p>
+    <section><h2>怎么做的</h2><ul><li>模特和四套衣服全部由 Codex 生成，44 张图</li><li>版式和文案按时间线排，代码批量出图</li><li>渲染后按拍子拼片</li></ul></section>
+    <section><h2>学到了什么</h2><p>方案写得够细，44 张图都一次画面合格。</p></section>
+    <section class="note"><h2>注明</h2><p>基于开源项目 hx-poster-reel（huxiang1126/huxiang-skills）。模特和服装由 AI 生成。音乐是代码生成的临时鼓点。</p></section>
+    
+  </div>
+</section>
+
+<nav class="pager" aria-label="上一个和下一个作品"><a href="dg-seasons.html"><small>← 上一个</small>东莞国贸的四季</a><a href="mv1.html"><small>下一个 →</small>B2W MV1 走路</a></nav>
+</main>
+<div class="foot-logo" id="footLogo"><video muted playsinline preload="auto" src="../assets/logo-write-light.mp4" aria-hidden="true"></video><img src="../assets/logo-black.png" alt="Back 2 Work Studio" width="1244" height="280"></div>
+<footer class="colophon">
+  <p>部分作品是学习和练习，参考了别人的结构和节奏，个别还用了原片音乐。每支片都在作品页写明，相关权利归原作者。如需修改或移除，请<a href="https://github.com/opc8838-hub/movie/issues">在 GitHub 联系我们</a>。</p>
+  <p class="r">B2W Studio · 2026<br>设计 · 视频 · 动效</p>
+</footer>
+<script>
+(function(){var w=document.getElementById('footLogo');if(!w)return;var v=w.querySelector('video');
+if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){w.classList.add('static');return;}
+new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){o.disconnect();var p=v.play();if(p)p.catch(function(){w.classList.add('static');});}});},{threshold:.5}).observe(v);})();
+</script>
+
+</body>
+</html>

@@ -187,4 +187,5 @@
 - **这是公开仓库，视频推上去后 Git 历史里就一直有。推之前先想好**
 - 上线前先问主理人
 - 先 `git fetch`，确认本地没有落后线上；不准 force push
-- 默认代理连不上时：`git -c http.proxy=http://127.0.0.1:7890 -c https.proxy=http://127.0.0.1:7890 push origin main`
+- 本机代理端口会变（用过 4780 和 7890）。先用默认配置；连不上再加 `git -c http.proxy=http://127.0.0.1:<端口> -c https.proxy=http://127.0.0.1:<端口>`
+- 提交前核对：页面里引用的每个文件都要在 `git ls-files` 里。`.gitignore` 忽略了 `src/`、`work/`、`out/`，只有根目录 `/work/` 被放行
