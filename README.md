@@ -1,9 +1,14 @@
-# movie
+# B2W Studio
 
-用 AI 剪片的工作方法笔记。每支片一个文件夹，里面放方案、脚本和复盘。
+back to work，简称 b2w：设计、视频、动效。这个仓库是工作室官网，也是我们的工作方法笔记。
+
+**官网：** https://opc8838-hub.github.io/movie/ （全部作品，每支都注明了来源）
+**工作室手册：** https://opc8838-hub.github.io/movie/handbook/ （源文件在 [handbook/](handbook/)）
+
+每支片一个文件夹，里面放方案、脚本和复盘。
 
 **在线学习页：**
-- jd 拉斯维加斯歌词 MV：https://opc8838-hub.github.io/movie/ （可播放的时间轴、17 张素材身份卡、逐镜配对理由）
+- jd 拉斯维加斯歌词 MV：https://opc8838-hub.github.io/movie/jd-lasvegas/guide/ （可播放的时间轴、17 张素材身份卡、逐镜配对理由）
 - hely 玻璃显标片：https://opc8838-hub.github.io/movie/hely-glass/ （可拖动的变速曲线、玻璃生命周期、冲击波逐帧）
 
 | 片子 | 文件夹 | 一句话 |
@@ -95,7 +100,11 @@
 ## 文件说明
 
 ```
-index.html                     在线学习页（由 build.py 生成，不要手改）
+index.html、work/、handbook/*.html、jd-lasvegas/index.html
+                               官网页面，由 site/build.py 生成，不要手改
+site/                          官网源文件：works.py 作品资料、style.css 样式、build.py 生成
+media/、assets/                网页用的视频、封面、logo、字体
+handbook/*.md                  工作室手册正文
 jd-lasvegas/
   PLAN.md                      交给 Sonnet 的完整执行说明：镜头表、歌词时间、硬规则
   render.py                    一键出片脚本，参数都在文件头
@@ -103,7 +112,7 @@ jd-lasvegas/
     template.html              学习页源文件，图片用 {{名字}} 占位
     img/                       学习页用的截图
     audio.json                 音乐能量曲线和节拍数据（librosa 测的）
-    build.py                   把截图和数据嵌进 template.html，生成根目录 index.html
+    build.py                   把截图和数据嵌进 template.html，生成本目录 index.html
 ```
 
 改了学习页之后，重新生成：
@@ -112,4 +121,10 @@ jd-lasvegas/
 python jd-lasvegas/guide/build.py
 ```
 
-原始素材、参考片、音乐和成片视频没有放进仓库，在本机 `E:\claude工作区\jd-mv2`。`render.py` 需要这些文件才能出片，路径写在它的文件头。
+改了官网之后，重新生成：
+
+```
+python -X utf8 site/build.py
+```
+
+原始素材、参考片和音乐没有放进仓库，网页用的压缩版成片在 `media/`。拉斯维加斯的原始文件在本机 `E:\claude工作区\jd-mv2`。`render.py` 需要这些文件才能出片，路径写在它的文件头。

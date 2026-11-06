@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>05 技术规范 · B2W Studio</title>
+<meta name="description" content="B2W Studio 工作室手册：05 技术规范">
+<meta name="theme-color" content="#000000">
+<meta property="og:title" content="05 技术规范 · B2W Studio">
+<meta property="og:description" content="B2W Studio 工作室手册：05 技术规范">
+<meta property="og:image" content="https://opc8838-hub.github.io/movie/assets/og.jpg">
+<link rel="icon" href="../assets/favicon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<header class="bar">
+  <a class="home" href="../index.html" aria-label="B2W Studio 首页"><img src="../assets/mark-white.png" alt="" width="28" height="26"><span>STUDIO</span></a>
+  <nav aria-label="主导航"><a href="../index.html#works">作品</a><a href="../handbook/index.html" aria-current="page">手册</a><a href="../index.html#methods">方法</a></nav>
+</header>
+<main id="main">
+<div class="doc-wrap"><nav class="toc" aria-label="手册目录"><ol><li><a href="index.html">手册首页</a></li><li><a href="01-workflow.html">01 工作流</a></li><li><a href="02-principles.html">02 审美原则</a></li><li><a href="03-shot-decisions.html">03 镜头怎么选</a></li><li><a href="04-templates.html">04 模板</a></li><li><a href="05-tech.html" aria-current="page">05 技术规范</a></li><li><a href="06-delivery.html">06 交片与复盘</a></li></ol></nav><article class="doc"><h1 id="05-技术规范">05 技术规范</h1>
+<p>都是实际踩过的坑。主要给 AI 看。</p>
+<hr />
+<h2 id="编码">编码</h2>
+<p>Python 或 canvas 管道出片，编码时一定带上这些参数，否则白底会发黄发绿：</p>
+<pre><code>-vf scale=out_color_matrix=bt709:out_range=tv:flags=accurate_rnd+full_chroma_int
+-colorspace bt709 -color_primaries bt709 -color_trc bt709 -color_range tv
+-pix_fmt yuv420p
+</code></pre>
+<p><strong>验证：</strong> 抽一帧白场，按 bt709 转回 RGB，应该接近 255/255/255。</p>
+<p>每次出这些版本：</p>
+<div class="tb"><table>
+<thead>
+<tr>
+<th>版本</th>
+<th>编码</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>正式版</td>
+<td>CRF 16</td>
+<td>存档、发布</td>
+</tr>
+<tr>
+<td>微信版</td>
+<td>CRF 22，小于 10MB</td>
+<td>发给人看</td>
+</tr>
+<tr>
+<td>对比版</td>
+<td>上半成片、下半参考</td>
+<td>只给自己对节奏，不外发</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="素材入库">素材入库</h2>
+<ul>
+<li><strong>iPhone 视频默认 HDR（HLG、杜比视界）。</strong> 不转换会整片发白。入库先转 SDR：<code>zscale + tonemap=hable</code>，人物亮度一般用 npl=203</li>
+<li><strong>Live 图：</strong> <code>.livp</code> 是压缩包，里面有 HEIC 和 MOV，解开再用。常有重复帧、叠化重影帧，要逐帧看。可用的往往只有其中 1 秒</li>
+<li><strong>手机录屏当参考：</strong> 先量出真实画面区域，比如 <code>crop=592:334:0:335</code>，并按可变帧率处理</li>
+<li><strong>水印：</strong> 海螺、优酷都会有，交付前逐帧查</li>
+<li><strong>方向：</strong> 前置摄像头是镜像，沟通时用“用户的左边”，先做举手测试</li>
+<li><strong>HEVC、旋转、可变帧率：</strong> 交给 ffmpeg 解码，不要交给网页</li>
+</ul>
+<hr />
+<h2 id="量参考片">量参考片</h2>
+<div class="tb"><table>
+<thead>
+<tr>
+<th>想知道</th>
+<th>方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>切点</td>
+<td><code>select='gt(scene,0.25)'</code> + showinfo，按 PTS 核对</td>
+</tr>
+<tr>
+<td>帧时间</td>
+<td><strong>抽帧必须 <code>-vsync passthrough</code></strong>，否则补重复帧会让时间错位（我们曾把苹果节奏量慢 1.45 倍）</td>
+</tr>
+<tr>
+<td>肉眼看不见的淡波纹、灰边</td>
+<td>灰度减高斯模糊 × 8–14（高通增强）</td>
+</tr>
+<tr>
+<td>一段运动怎么走</td>
+<td><code>mpdecimate</code> 去重帧后平铺成一张图</td>
+</tr>
+<tr>
+<td>镜头里哪里变速</td>
+<td>光流算运动量曲线</td>
+</tr>
+<tr>
+<td>歌词出现时间</td>
+<td>按字的颜色逐帧数像素，数量一跳就是出新词，误差约 0.05 秒</td>
+</tr>
+<tr>
+<td>选素材入点</td>
+<td>滑动窗口算光流，挑动作起点落在目标节点的那一段</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>量参考要自己裁对区域、逐帧核对。</strong> 执行者曾把转角估得过快。</p>
+<hr />
+<h2 id="音乐踩点">音乐踩点</h2>
+<ul>
+<li>工具：Demucs 分离人声，faster-whisper 对词时间，librosa 找节拍和能量</li>
+<li><strong>工具给的数只是草稿。</strong> librosa 把一首歌测成 172 BPM，大约快了一倍，需要人听</li>
+<li>先测原曲。不要在剪过的文件上测拍点【借鉴】</li>
+<li>给每段标好：前奏、drop、乐句（长音 / 碎拍 / 呼吸）、高潮</li>
+<li>时间全部从节拍网格算，画面和音乐自然对齐</li>
+</ul>
+<p><strong>配乐来源：</strong></p>
+<div class="tb"><table>
+<thead>
+<tr>
+<th>来源</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>代码合成</td>
+<td>适合踩点音效、节奏明确的简单配乐。AI 听不到，好坏靠人的耳朵</td>
+</tr>
+<tr>
+<td>Suno</td>
+<td>写段落标签（<code>[Intro: …]</code>）能控制结构；风格里不能写音乐人名字；带 idempotency_key 防重复扣费</td>
+</tr>
+<tr>
+<td>参考片音乐</td>
+<td>仅限个人和内部，商用要换</td>
+</tr>
+<tr>
+<td>海螺音乐 API</td>
+<td>对新用户关闭</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="ai-镜头去假感">AI 镜头去假感</h2>
+<p>实测一次海螺 1080p 生成帧对比实拍 Live：</p>
+<div class="tb"><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>生成</th>
+<th>实拍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>拉普拉斯方差（锐度）</td>
+<td>249</td>
+<td>9.4</td>
+</tr>
+<tr>
+<td>1% 亮度（黑位）</td>
+<td>0</td>
+<td>15</td>
+</tr>
+<tr>
+<td>99% 亮度（高光）</td>
+<td>190</td>
+<td>157</td>
+</tr>
+</tbody>
+</table></div>
+<p>所以生成画面过锐、死黑，像 CG。入片前先量，再补：</p>
+<div class="tb"><table>
+<thead>
+<tr>
+<th>处理</th>
+<th>hely 玻璃片的定稿值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>轻微柔化</td>
+<td>gblur 0.4</td>
+</tr>
+<tr>
+<td>抬黑位</td>
+<td>7/255（6–10）</td>
+</tr>
+<tr>
+<td>高光柔压</td>
+<td>≤ 248</td>
+</tr>
+<tr>
+<td>细颗粒</td>
+<td>σ≈2.2/255</td>
+</tr>
+<tr>
+<td>亮部光晕</td>
+<td>4%（3–5%）</td>
+</tr>
+<tr>
+<td>暗角</td>
+<td>无</td>
+</tr>
+<tr>
+<td>色相</td>
+<td>不动</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>宁轻勿重。</strong> 主理人说过：“不是做旧，是质感，不要太刻意，刚好那种。”验收时列出处理前、处理后、实拍三组数，放大 200% 对比。</p>
+<hr />
+<h2 id="变速与慢动作">变速与慢动作</h2>
+<p>规律（来自 hely 玻璃片的光流实测）：</p>
+<pre><code>正常速度 → 冲击帧骤然放慢 → 关键内容都在慢动作里 → 退场后加速 → 冲进硬切
+</code></pre>
+<pre><code>minterpolate=fps=120:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1
+</code></pre>
+<p>插完放大 200% 看边缘。脸和手的处理见<a href="02-principles.html#慢动作要不要补帧">第 02 章</a>。</p>
+<p>详细方法见 <a href="../hely-glass/">hely 玻璃片的动态语法六条</a>。</p>
+<hr />
+<h2 id="抠像和合成">抠像和合成</h2>
+<ul>
+<li>绿幕：色差抠像 + 去溢色</li>
+<li>任意背景真人：净背景差值保发丝 + isnet 保身体；不要用 AI 人像范围直接压 alpha（isnet 不认椅子）；只留连通大块</li>
+<li>产品：白床垫贴白墙时 isnet 会破洞</li>
+<li>逐帧视频抠图：约 3 秒/帧，一次只跑一个 AI 进程</li>
+<li>真实画面尽量不拆层。歌词藏人身后这类可以，但要放大查毛边</li>
+<li>手写字：Zhang-Suen 细化后沿中心线路程显现</li>
+</ul>
+<hr />
+<h2 id="机器和环境">机器和环境</h2>
+<p>主要制作机内存紧、显卡弱（GeForce GT 610，16GB 内存）：</p>
+<ul>
+<li>不跑本地 AI 大模型；对口型走云端</li>
+<li>渲染一边算一边写 ffmpeg 管道，不把整段放内存</li>
+<li>重渲前查空闲内存，大于 3500MB 再开；AI 抠像同时只跑一个</li>
+<li>长片分段，每 30 帧一个进程，避免 MemoryError</li>
+<li>主理人常开着剪映和桌面 AI 客户端，内存不够时提醒关闭</li>
+<li>浏览器逐帧渲染，每 50 帧重启一次防内存爆</li>
+<li>网页动效上线前在真实机器开窗测帧率；WebGL 导出要加 <code>--use-angle=swiftshader</code></li>
+</ul>
+<p>Windows 上：</p>
+<ul>
+<li><code>cv2.imread</code> 读不了中文路径，用 <code>cv2.imdecode(np.fromfile(...))</code> 或 PIL</li>
+<li>Python 脚本用 <code>python -X utf8</code></li>
+</ul>
+<hr />
+<h2 id="工具的坑">工具的坑</h2>
+<div class="tb"><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>坑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>海螺 API</td>
+<td>国内接口直连，走代理会握手超时、静默卡死。Hailuo-02 首尾帧最短 6 秒；H3 系列走 v2 接口</td>
+</tr>
+<tr>
+<td>海螺配音</td>
+<td>克隆音色 7 天不用会删。数字写汉字，型号写念法（“L Y 六百”）</td>
+</tr>
+<tr>
+<td>Codex</td>
+<td>新版路径常变，用真有 <code>codex.exe</code> 的目录；Windows 沙箱常失败，图常留在 <code>~/.codex/generated_images/</code>；15 分钟没产出就重来；额度有限，不要一次画太多</td>
+</tr>
+<tr>
+<td>子代理</td>
+<td>同时开 4 个会撞额度。禁用素材要写完整路径，验收专门查。要求如实报告，否则会报“完美”</td>
+</tr>
+<tr>
+<td>执行者</td>
+<td>会偷偷降低参数，或自己“优化”。方案里写死，并和原版逐像素比</td>
+</tr>
+<tr>
+<td>Git</td>
+<td>推送失败先查代理端口，不要盲目重试</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="配音品牌片">配音（品牌片）</h2>
+<ul>
+<li>开工就发录音要求，不合格宁可重录</li>
+<li>逐句生成，单句可重配</li>
+<li>讲话镜头放慢到约 0.85 倍更有苹果味</li>
+<li>整体约 -16 LUFS</li>
+</ul>
+<hr />
+<h2 id="隐私和发布">隐私和发布</h2>
+<ul>
+<li>密钥放 <code>.env</code>，不进仓库</li>
+<li>公开仓库不放：原始素材、音乐、参考片、客户内部文件</li>
+<li>发布前查 Git 实际跟踪的文件，不要只相信 <code>.gitignore</code></li>
+<li>只放我们自己的成片截图</li>
+<li>苹果产品图等第三方素材只限内部和测试，对外要换可商用素材</li>
+<li>示意性的证书、假专利对外前必须换成真的</li>
+</ul></article></div>
+</main>
+<div class="foot-logo" id="footLogo"><video muted playsinline preload="auto" src="../assets/logo-write-light.mp4" aria-hidden="true"></video><img src="../assets/logo-black.png" alt="Back 2 Work Studio" width="1244" height="280"></div>
+<footer class="colophon">
+  <p>部分作品是学习和练习，参考了别人的结构和节奏，个别还用了原片音乐。每支片都在作品页写明，相关权利归原作者。如需修改或移除，请<a href="https://github.com/opc8838-hub/movie/issues">在 GitHub 联系我们</a>。</p>
+  <p class="r">B2W Studio · 2026<br>设计 · 视频 · 动效</p>
+</footer>
+<script>
+(function(){var w=document.getElementById('footLogo');if(!w)return;var v=w.querySelector('video');
+if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){w.classList.add('static');return;}
+new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){o.disconnect();var p=v.play();if(p)p.catch(function(){w.classList.add('static');});}});},{threshold:.5}).observe(v);})();
+</script>
+
+</body>
+</html>

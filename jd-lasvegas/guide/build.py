@@ -1,4 +1,4 @@
-"""把 template.html 里的 {{图片名}} 和 {{audio}} 换成内嵌数据，生成仓库根目录的 index.html。
+"""把 template.html 里的 {{图片名}} 和 {{audio}} 换成内嵌数据，生成本目录的 index.html。
 用法：python jd-lasvegas/guide/build.py"""
 import os, re, base64
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -17,5 +17,5 @@ body = re.sub(r'\{\{([\w.]+)\}\}', rep, s)
 page = ('<!doctype html>\n<html lang="zh-CN">\n<head>\n<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
         '</head>\n<body>\n' + body + '\n</body>\n</html>\n')
-open(os.path.join(ROOT, 'index.html'), 'w', encoding='utf-8').write(page)
+open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(page)
 print('index.html', len(page) // 1024, 'KB')
