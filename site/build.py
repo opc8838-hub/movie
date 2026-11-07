@@ -173,7 +173,7 @@ def work_pages():
                 for p in w['parts'])
             top = f'<section class="parts" aria-label="全部片段">{figs}</section>'
         else:
-            top = f'<section class="screen"><video controls playsinline preload="metadata" poster="{pre}media/{w["slug"]}.jpg" src="{pre}media/{w["slug"]}.mp4" width="{w["w"]}" height="{w["h"]}"></video></section>'
+            top = f'<section class="screen"><video controls playsinline preload="metadata" poster="{pre}media/{w["slug"]}.jpg" src="{pre}media/{w["slug"]}.mp4" width="{w["w"]}" height="{w["h"]}" style="--ar:{w["w"]}/{w["h"]};--arn:{w["w"] / w["h"]:.4f}"></video></section>'
         size = '7 段视频' if w.get('parts') else f'{fmt_dur(w["dur"])} · {w["w"]}×{w["h"]}'
         facts = [('类型', w['line']), ('性质', w['tag']), ('时间', w['date']), ('版本', w['ver']), ('规格', size)]
         fx = ''.join(f'<dt>{E(k)}</dt><dd>{E(v)}</dd>' for k, v in facts)

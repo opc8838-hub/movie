@@ -32,6 +32,8 @@ def preview(slug, src, t, w, h, dur):
 
 
 for w in WORKS:
+    if w.get('draft'):
+        continue
     src = w.get('poster_from', w['slug'])
     poster(w['slug'], src, w['poster'], w['w'], w['h'])
     preview(w['slug'], src, w['poster'], w['w'], w['h'], w['dur'] or 18.8)

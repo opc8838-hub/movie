@@ -102,7 +102,7 @@ p { margin: 0; }
 
 /* 作品页 */
 .screen { background: var(--black); padding: clamp(0px, 2vw, 32px) var(--gutter); display: grid; place-items: center; }
-.screen video { width: auto; max-width: 100%; height: auto; max-height: calc(100vh - 120px); max-height: calc(100svh - 120px); background: var(--black); }
+.screen video { aspect-ratio: var(--ar, 16 / 9); width: min(100%, calc((100vh - 120px) * var(--arn, 1.7778))); width: min(100%, calc((100svh - 120px) * var(--arn, 1.7778))); height: auto; background: var(--black); object-fit: contain; }
 .info { padding: clamp(32px, 5vw, 64px) var(--gutter); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(28px, 6vw, 96px); }
 @media (max-width: 800px) { .info { grid-template-columns: minmax(0, 1fr); } }
 .info h1 { font-size: clamp(30px, 4.6vw, 60px); font-weight: 800; }
