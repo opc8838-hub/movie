@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>盆栽园 DJ · B2W Studio</title>
+<meta name="description" content="把一段日本盆栽园户外 DJ 现场，换成主理人的插画人物 MutedMEN 复刻：同样的镜头、剪辑点和转身。">
+<meta name="theme-color" content="#000000">
+<meta property="og:title" content="盆栽园 DJ · B2W Studio">
+<meta property="og:description" content="把一段日本盆栽园户外 DJ 现场，换成主理人的插画人物 MutedMEN 复刻：同样的镜头、剪辑点和转身。">
+<meta property="og:image" content="https://opc8838-hub.github.io/movie/media/mutedmen-garden.jpg">
+<link rel="icon" href="../assets/favicon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<header class="bar">
+  <a class="home" href="../index.html" aria-label="B2W Studio 首页"><img src="../assets/mark-white.png" alt="" width="28" height="26"><span>STUDIO</span></a>
+  <nav aria-label="主导航"><a href="../index.html#works" aria-current="page">作品</a><a href="../handbook/index.html">手册</a><a href="../index.html#methods">方法</a></nav>
+</header>
+<main id="main">
+<section class="screen"><video controls playsinline preload="metadata" poster="../media/mutedmen-garden.jpg" src="../media/mutedmen-garden.mp4" width="1120" height="1400" style="--ar:1120/1400;--arn:0.8000"></video></section>
+<section class="info">
+  <div><h1>盆栽园 DJ</h1><p class="en">MutedMEN Bonsai Garden Session</p><dl class="facts"><dt>类型</dt><dd>AI 短片</dd><dt>性质</dt><dd>复刻练习</dd><dt>时间</dt><dd>2026-11</dd><dt>版本</dt><dd>v5</dd><dt>规格</dt><dd>0:32 · 1120×1400</dd></dl></div>
+  <div class="body">
+    <p class="summary">把一段日本盆栽园户外 DJ 现场，换成主理人的插画人物 MutedMEN 复刻：同样的镜头、剪辑点和转身。</p>
+    <section><h2>怎么做的</h2><ul><li>先量参考片：13 个镜头的切点、机位动不动，转身按每秒 8 帧拆成头先转、肩跟上、再迈步</li><li>每个人物先做多角度参考包，原作有的角度用原作，缺的才让 AI 补，每个角度都由主理人点头</li><li>每个镜头由人定首帧和尾帧，MiniMax 只补中间的动作，共 10 段</li><li>叠字、三方联名落版、剪接和配原声都用代码做；开场由两条生成片按最像的一帧拼接，没有再生成</li></ul></section>
+    <section><h2>学到了什么</h2><p>让 AI 照文字描述画 IP 人物的脸，两次都不像；把原作的头贴到身子上，动起来是僵的。人物先有过审的参考包，再让视频模型整体去画，才动得像人。</p></section>
+    <section class="note"><h2>注明</h2><p>复刻练习。镜头结构和音乐来自 DJ SHOTA 在日本盆栽园的现场视频（Login.jp），版权归原作者，这里仅作学习展示。人物 MutedMEN 是主理人的插画 IP；关键帧由 Codex 生成，动作由 MiniMax 生成，叠字和落版用代码做。B2W × H.O.T.L. × mutedmen 联名。</p></section>
+    <p class="more"><a href="../handbook/07-ip-remake.html">完整方法：用自己的 IP 复刻参考片 →</a></p>
+  </div>
+</section>
+
+<nav class="pager" aria-label="上一个和下一个作品"><a href="lianying.html"><small>← 上一个</small>连盈科技发布会片</a><a href="hely-glass.html"><small>下一个 →</small>hely 玻璃显标片</a></nav>
+</main>
+<div class="foot-logo" id="footLogo"><video muted playsinline preload="auto" src="../assets/logo-write-light.mp4" aria-hidden="true"></video><img src="../assets/logo-black.png" alt="Back 2 Work Studio" width="1244" height="280"></div>
+<footer class="colophon">
+  <p>部分作品是学习和练习，参考了别人的结构和节奏，个别还用了原片音乐。每支片都在作品页写明，相关权利归原作者。如需修改或移除，请<a href="https://github.com/opc8838-hub/movie/issues">在 GitHub 联系我们</a>。</p>
+  <p class="r">B2W Studio · 2026<br>设计 · 视频 · 动效</p>
+</footer>
+<script>
+(function(){var w=document.getElementById('footLogo');if(!w)return;var v=w.querySelector('video');
+if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){w.classList.add('static');return;}
+new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){o.disconnect();var p=v.play();if(p)p.catch(function(){w.classList.add('static');});}});},{threshold:.5}).observe(v);})();
+</script>
+
+</body>
+</html>

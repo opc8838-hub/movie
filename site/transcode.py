@@ -52,6 +52,7 @@ J = [
  ('nobody', r'E:\Nobody选素材\Nobody_完整版_v6_左脸酒窝定格.mp4'),
  ('fairy-linda', r'E:\衣服视频\交付\代码重剪_v2\FAIRY_LINDA_15秒_代码重剪_v2_720P.mp4'),
  ('hotl', r'D:\B2W成片\微信视频2026-11-07_212450_012.mp4'),
+ ('mutedmen-garden', r'E:\claude工作区\mutedmen-mv\video\MutedMEN_盆栽园MV_v5.mp4'),
  ('your-present', r'D:\B2W成片\微信视频2026-11-07_212551_004.mp4'),
  ('bot-voice', r'D:\B2W成片\微信视频2026-11-07_212610_545.mp4'),
  ('spotlight', r'D:\B2W成片\微信视频2026-11-07_212620_821.mp4'),

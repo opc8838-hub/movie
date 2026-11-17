@@ -108,7 +108,8 @@ def rows(items, pre=''):
 
 CHAPTERS = [('README', 'index', '手册首页'), ('01-workflow', '01-workflow', '01 工作流'), ('02-principles', '02-principles', '02 审美原则'),
             ('03-shot-decisions', '03-shot-decisions', '03 镜头怎么选'), ('04-templates', '04-templates', '04 模板'),
-            ('05-tech', '05-tech', '05 技术规范'), ('06-delivery', '06-delivery', '06 交片与复盘')]
+            ('05-tech', '05-tech', '05 技术规范'), ('06-delivery', '06-delivery', '06 交片与复盘'),
+            ('07-ip-remake', '07-ip-remake', '07 用自己的 IP 复刻一支参考片')]
 
 
 def home():
@@ -118,7 +119,8 @@ def home():
     cards = '\n'.join(card(w) for w in WORKS)
     chap = [(t, {'手册首页': '一分钟读完'}.get(t, ''), f'handbook/{h}.html') for _, h, t in CHAPTERS]
     subs = {'01 工作流': '从开工到归档，人只在三处拍板', '02 审美原则': '什么算好，交片前问自己什么', '03 镜头怎么选': '实拍、代码还是 AI',
-            '04 模板': '开工单、审核、修改单，直接复制', '05 技术规范': '颜色、量参考片、踩点、去 AI 味', '06 交片与复盘': '自查清单和复盘模板'}
+            '04 模板': '开工单、审核、修改单，直接复制', '05 技术规范': '颜色、量参考片、踩点、去 AI 味', '06 交片与复盘': '自查清单和复盘模板',
+            '07 用自己的 IP 复刻一支参考片': '人物参考包、关键帧、代码组装和逐镜报价'}
     chap = [(t, subs.get(t, s), u) for t, s, u in chap]
     body = f'''<section class="hero" id="hero" aria-label="Back 2 Work Studio">
   <video id="heroV" muted playsinline autoplay preload="auto" src="assets/logo-write-dark.mp4" aria-hidden="true"></video>

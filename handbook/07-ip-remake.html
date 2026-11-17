@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>07 用自己的 IP 复刻一支参考片 · B2W Studio</title>
+<meta name="description" content="B2W Studio 工作室手册：07 用自己的 IP 复刻一支参考片">
+<meta name="theme-color" content="#000000">
+<meta property="og:title" content="07 用自己的 IP 复刻一支参考片 · B2W Studio">
+<meta property="og:description" content="B2W Studio 工作室手册：07 用自己的 IP 复刻一支参考片">
+<meta property="og:image" content="https://opc8838-hub.github.io/movie/assets/og.jpg">
+<link rel="icon" href="../assets/favicon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<header class="bar">
+  <a class="home" href="../index.html" aria-label="B2W Studio 首页"><img src="../assets/mark-white.png" alt="" width="28" height="26"><span>STUDIO</span></a>
+  <nav aria-label="主导航"><a href="../index.html#works">作品</a><a href="../handbook/index.html" aria-current="page">手册</a><a href="../index.html#methods">方法</a></nav>
+</header>
+<main id="main">
+<div class="doc-wrap"><nav class="toc" aria-label="手册目录"><ol><li><a href="index.html">手册首页</a></li><li><a href="01-workflow.html">01 工作流</a></li><li><a href="02-principles.html">02 审美原则</a></li><li><a href="03-shot-decisions.html">03 镜头怎么选</a></li><li><a href="04-templates.html">04 模板</a></li><li><a href="05-tech.html">05 技术规范</a></li><li><a href="06-delivery.html">06 交片与复盘</a></li><li><a href="07-ip-remake.html" aria-current="page">07 用自己的 IP 复刻一支参考片</a></li></ol></nav><article class="doc"><h1 id="07-用自己的-ip-复刻一支参考片">07 用自己的 IP 复刻一支参考片</h1>
+<p><strong>AI 管生成，代码管组装，人管品味和拍板。</strong></p>
+<p>真人参考片给镜头、动作和节奏。自己的 IP 原作给长相和画风。先把两边定准，再让模型补中间的动作。</p>
+<p>这章来自 MutedMEN 盆栽园 MV。方法适合插画人物复刻真人片。自己的角色原作越完整，后面越少返工。</p>
+<hr />
+<h2 id="六步走">六步走</h2>
+<h3 id="1-先量参考片再动手">1. 先量参考片，再动手</h3>
+<p>先把参考片拆成镜头表：每镜几秒到几秒、机位动不动、谁先动、谁后动。不是看一遍就凭印象写。</p>
+<ul>
+<li>用 ffmpeg 的 scene 检测找切点，再逐帧核对。</li>
+<li>用相位相关量固定背景的位移，判断机位是否移动。本片实测：主机位和插入镜头都是固定机位（首尾帧位移 0 像素）。早先用逐帧位移累加估出「缓慢上移约 4%/秒」，是误差累积造成的错误，已作废。量机位要拿首帧和尾帧直接比，不要把逐帧小位移加起来。</li>
+<li>按 8fps 拆动作。比如转身，不只写“转身”，要写“头先转、肩慢半拍跟上、再迈步”。</li>
+<li>换录屏时，用音频互相关对齐。本片实测新录屏 0 秒对应旧录屏约 3.1 秒；切点全部按新录屏重算。</li>
+</ul>
+<p>用 <code>measure_ref.py</code>。方法也见<a href="05-tech.html#量参考片">第 05 章：量参考片</a>。</p>
+<p><strong>人定：</strong> 复刻哪段、保留什么、哪份参考片是时间基准。</p>
+<h3 id="2-人物参考包先过审">2. 人物参考包先过审</h3>
+<p>每个角色一套：正脸、朝左、朝右、低头、抬头、背影、全身转面。</p>
+<p><strong>原作有的角度直接用原作像素，没有的才让 AI 补。</strong> 每个角度都让主理人看过。只靠文字描述画脸，会画成另一个人。</p>
+<p>本片把肤色统一到 RGB (240,176,148)。原作约 (238,147,111)，主理人觉得红。这个数只属于本片，换 IP 重新定。胡子也先处理：代码修不干净，就做局部编辑，只擦胡子。</p>
+<p>用 <code>ref_pack.py</code> 裁原作、拆角度表、统一肤色、出总览。缺角度先准备补图任务，不自动替人批准。</p>
+<p><strong>人定：</strong> 每个角度是不是自己的人物，肤色和胡子是否通过。</p>
+<h3 id="3-关键帧由人定模型只补中间">3. 关键帧由人定，模型只补中间</h3>
+<p>每镜先画首帧。转身、开场这类大动作，再加尾帧。</p>
+<p>以认可图为底，<strong>只改姿势</strong>。锁住画布尺寸、人物大小、人物位置、设备和背景。一次给 2–3 个变体，让人选。</p>
+<p>动作写成先后顺序，还要交代重量和接触：手放在哪个旋钮上，身体向哪里压，什么时候回到混音台。不要让手浮在设备上面。</p>
+<p>用 <code>gen_keys.py</code> 写关键帧计划；用 <code>prompt_keyframe.txt</code>、<code>prompt_motion.txt</code> 组织提示词。</p>
+<p><strong>人定：</strong> 用哪张首帧、哪张尾帧、动作幅度多大。通过以后才做视频。</p>
+<h3 id="4-能用代码的不用-ai">4. 能用代码的不用 AI</h3>
+<div class="tb"><table>
+<thead>
+<tr>
+<th>事情</th>
+<th>做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>头顶标签</td>
+<td><code>label.py</code>，Ink Free 手写体加白描边；本片是 mutedmen 和 opus 5.5</td>
+</tr>
+<tr>
+<td>三方联名落版</td>
+<td><code>end_card.py</code>，纸纹底、有机蓝色色块、品牌标排一行</td>
+</tr>
+<tr>
+<td>两条开场拼成一条</td>
+<td><code>splice.py</code>，在候选时间窗里算人物区域 MSE，找最像的帧，再叠化 3 帧</td>
+</tr>
+<tr>
+<td>按参考片剪接、变速、配原声</td>
+<td><code>assemble.py</code>，从镜头表读取切点、取段和叠字时间</td>
+</tr>
+</tbody>
+</table></div>
+<p>字、卡片、剪接由代码做，确定、可改，不增加生成费。</p>
+<p><strong>人定：</strong> 标签放哪，落版用哪版，拼接看起来是否自然。</p>
+<h3 id="5-花钱前报价先试一条每步自检">5. 花钱前报价，先试一条，每步自检</h3>
+<p>先给出“镜头 × 秒数 × 单价”表，等主理人回“跑”。先试一条，方向对了再做剩下的。</p>
+<p><code>batch_gen.py</code> 默认只打印报价。真正提交须显式执行，并确认已获批准。它调用 <code>mm3.py</code>，生成后立刻去掉声音，放进 <code>raw_silent/</code>。不把带 AI 配乐的原始文件交给人。</p>
+<p>出片先按 8fps 拆帧，看手是否浮空、脸是否走样、动作是否到位。不合格先剪或用代码修。确实要重生成，重新报价。</p>
+<p><strong>人定：</strong> 每次的任务、秒数和总价；首条试看后是否继续。</p>
+<h3 id="6-版本可追溯">6. 版本可追溯</h3>
+<p>每版单独文件，不覆盖认可版。路径、切点、取段和尺寸放进 <code>shots.json</code>，改配置再出新片。</p>
+<p>常规压缩倍数控制在 ≤1.15。大动作宁可原速取前 N 秒。本片旧版里仍有转身、浇水、扶眼镜和手臂 4 镜超过这个值；复现 v5 保留原值，并标记为历史例外，不能当作新片推荐值。</p>
+<p>用 <code>assemble.py</code> 出成片和参考片并排对照。按<a href="06-delivery.html#交片前自查">第 06 章</a>自查，再交给人。</p>
+<p><strong>人定：</strong> 看动态、听声音、认定定稿。抽帧和误差数值不能替人决定动作手感。</p>
+<hr />
+<h2 id="人拍板的点">人拍板的点</h2>
+<p>不需要每个命令都问。把需要选择的东西做好，再集中交给人：</p>
+<div class="tb"><table>
+<thead>
+<tr>
+<th>什么时候</th>
+<th>给人看什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>开工前</td>
+<td>参考片时间基准、镜头表、保留什么</td>
+</tr>
+<tr>
+<td>做关键帧前</td>
+<td>每个角色的多角度参考包</td>
+</tr>
+<tr>
+<td>生成视频前</td>
+<td>2–3 个关键帧变体、动作顺序、逐镜报价</td>
+</tr>
+<tr>
+<td>首条试完</td>
+<td>配了正确原声的试看和自查结果</td>
+</tr>
+<tr>
+<td>交片时</td>
+<td>新版、并排对照、改了什么</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="报价怎么算">报价怎么算</h2>
+<p>按生成秒数算，不按最终成片时长算。同一条素材剪成几个镜头，不重复算生成费。代码拼接和落版不新增接口费。</p>
+<div class="tb"><table>
+<thead>
+<tr>
+<th>镜头</th>
+<th>条数</th>
+<th>每条生成秒数</th>
+<th>每秒单价</th>
+<th>小计</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>首条试看示例</td>
+<td>1</td>
+<td>6</td>
+<td>¥0.5</td>
+<td>¥3</td>
+</tr>
+</tbody>
+</table></div>
+<p>失败重做另列一行。报价不是授权，等人同意才提交。余额不足或网络状态不明时先停，不能一直重试。</p>
+<hr />
+<h2 id="别这样做">别这样做</h2>
+<div class="tb"><table>
+<thead>
+<tr>
+<th>做法</th>
+<th>结果</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>手绘人物贴实景照片</td>
+<td>“狗屎版本”</td>
+<td>两种质感打架</td>
+</tr>
+<tr>
+<td>Codex 照文字描述画 MutedMEN 的脸</td>
+<td>两次“脸不对”</td>
+<td>描述锁不住原作身份，IP 主人一眼看出</td>
+</tr>
+<tr>
+<td>原作头像素贴 AI 身体</td>
+<td>静帧能用，比例和逻辑仍被挑</td>
+<td>头和身体不是一体画的</td>
+</tr>
+<tr>
+<td>一次画九宫格，再贴头做逐帧动画</td>
+<td>“完全不行”</td>
+<td>头是僵的，不能自然低头、转头</td>
+</tr>
+<tr>
+<td>energetic / hard / big flourish，再加速 1.4 倍</td>
+<td>动作夸张、晃太快</td>
+<td>模型已经用力，加速再放大</td>
+</tr>
+<tr>
+<td>三方联名标垫白底条</td>
+<td>“像贴上去的”</td>
+<td>和画面不融，改独立纸色落版卡</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="踩过的坑">踩过的坑</h2>
+<div class="tb"><table>
+<thead>
+<tr>
+<th>坑</th>
+<th>下次怎么做</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>生成片自带 AI 配乐，被以为音乐配错</td>
+<td>下载后立即 <code>-an</code>，只留无声素材；看片版配原片声音</td>
+</tr>
+<tr>
+<td>MiniMax 余额不足返回 HTTP 402，还在重试</td>
+<td>402 立即退出并提示充值；查询有时限，提交失败不自动重提</td>
+</tr>
+<tr>
+<td>Codex 提示超时，其实已经画完</td>
+<td>超时设 25 分钟；先找 generated_images 缓存，不直接重画</td>
+</tr>
+<tr>
+<td>改姿势时画布变了、人物缩了</td>
+<td>以认可图为底，写死画布、人物大小、设备和背景；只改姿势</td>
+</tr>
+<tr>
+<td>PowerShell 写中文脚本乱码或加 BOM</td>
+<td>UTF-8 无 BOM，运行 Python 加 <code>-X utf8</code></td>
+</tr>
+<tr>
+<td>纸色偏灰，脸显红</td>
+<td>本片把纸白点调到 240，<code>a*255/240</code>；先对照再决定</td>
+</tr>
+<tr>
+<td>加速后动作急</td>
+<td>常规 ≤1.15 倍；大动作原速截取</td>
+</tr>
+<tr>
+<td>两条同首尾帧素材都各有好动作</td>
+<td>在人物区域按 MSE 找最像帧，叠化 3 帧；本片 v5 开场这样完成</td>
+</tr>
+<tr>
+<td>编码后颜色变了</td>
+<td>缩放带 <code>accurate_rnd+full_chroma_int</code>，成片带 bt709，见<a href="05-tech.html#编码">第 05 章</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>chill 提示词写“小幅、慢、放松、顺滑、有重量”，按顺序交代动作。别一边写放松，一边又写猛烈、大幅挥臂。</p>
+<hr />
+<h2 id="本片实例">本片实例</h2>
+<p>2026 年 11 月 16–17 日制作。32.8 秒，1120×1400，4:5，24fps，13 个剪辑镜头。参考片是真人盆栽园 DJ 户外现场，画面换成 MutedMEN 插画人物。</p>
+<p>共生成 <strong>10 段，¥28.5</strong>（MiniMax-H3-Max，768P，¥0.5/秒，57 个计费秒）：转身、开场 v1、开场 v2、开场 v3、主机位续打、扶眼镜、结尾、松树近景、全景浇水、手臂特写。其中开场 v1、v2 没进定稿，但 v2 的手势被拼进了 v5 开场。</p>
+<div class="tb"><table>
+<thead>
+<tr>
+<th>版本</th>
+<th>改了什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1</td>
+<td>第一版整片；结尾是原作 Monday / mutedmen 签名</td>
+</tr>
+<tr>
+<td>v2</td>
+<td>结尾换三方联名，先用白底条压画面；被认为像贴上去的</td>
+</tr>
+<tr>
+<td>v3</td>
+<td>改成纸色独立落版卡；加头顶 mutedmen 标签，开场仍是较用力的动作</td>
+</tr>
+<tr>
+<td>v4</td>
+<td>换 chill 开场，慢搓碟、手回混音台，原速取前 3.7 秒</td>
+</tr>
+<tr>
+<td>v5</td>
+<td>用 v3 生成片的放松开头，接 v2 生成片的明显手势；找最像帧、叠化 3 帧，保留其余结构</td>
+</tr>
+</tbody>
+</table></div>
+<p>这里的“v2/v3 生成片”指开场素材 <code>open_v2/open_v3</code>，不是整片版本。整片 v5 没有为这次拼接重新生成。</p>
+<p>最终使用的切点是：0、3.70、4.93、8.10、11.53、13.73、16.60、18.50、21.10、22.70、23.70、24.73、25.40、32.80 秒。开场标签 0.3–3.5 秒；浇水人标签 8.5–11.3 秒；30.3 秒开始用半秒淡入落版卡。</p>
+<p>参考片画面和音乐来自用户提供的录屏，相关权利归原作者。这里用于方法复盘与学习；对外发布另核对授权。</p>
+<p>脚本沉淀为 <code>ip-character-remake</code> 草稿。先由原制作者审核，再安装使用。</p></article></div>
+</main>
+<div class="foot-logo" id="footLogo"><video muted playsinline preload="auto" src="../assets/logo-write-light.mp4" aria-hidden="true"></video><img src="../assets/logo-black.png" alt="Back 2 Work Studio" width="1244" height="280"></div>
+<footer class="colophon">
+  <p>部分作品是学习和练习，参考了别人的结构和节奏，个别还用了原片音乐。每支片都在作品页写明，相关权利归原作者。如需修改或移除，请<a href="https://github.com/opc8838-hub/movie/issues">在 GitHub 联系我们</a>。</p>
+  <p class="r">B2W Studio · 2026<br>设计 · 视频 · 动效</p>
+</footer>
+<script>
+(function(){var w=document.getElementById('footLogo');if(!w)return;var v=w.querySelector('video');
+if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){w.classList.add('static');return;}
+new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){o.disconnect();var p=v.play();if(p)p.catch(function(){w.classList.add('static');});}});},{threshold:.5}).observe(v);})();
+</script>
+
+</body>
+</html>
