@@ -2,6 +2,13 @@
 # tag：客户项目 / 合作项目 / Demo / 复刻练习 / 自有品牌 / 原创
 # poster：封面取第几秒；parts：一个作品有多段视频时用；draft=True：资料留着，暂不上站
 WORKS = [
+ dict(slug='hand-catch', title='接住 Hand Catch', en='Hand Catch', line='AI 短片', tag='复刻练习', date='2026-11-20', ver='v3', w=1080, h=1080, dur=18.0, poster=4.2,
+  summary='一比一复刻手接住下落 iPhone 的演示。手机被接住后转正停稳，再拖动切换视角。',
+  how=['用 Codex 编辑出 22 张关键帧。用一张定妆图作参考，只重画手，保留构图、手机姿态和运动模糊。', '把相邻的关键帧交给海螺 MiniMax-H3-Max 做首尾帧，补出 18 段动作。', '用代码量出每段实际动了多少，按原片实测的速度重排时间。关键帧之间用光流变形接起来，全片只保留原片在 11.31 秒的硬切。'],
+  learned='手先用图片编辑做静帧，一张约 1 分钟。提示词写清哪张图要改、哪张图作参考。片段两头反复减速，接起来就会顿，按原片的速度曲线重排时间就顺了。',
+  note='复刻练习。构图和节奏参考 Jose Sáez Merino 的 Matte app 演示。手和画面由 Codex 和海螺生成，剪辑节奏由代码完成。全片无声，无音乐。手机外观和锁屏为 Apple iPhone，仅作非商业展示，版权归原权利人。',
+  note_link=('Matte 演示原帖', 'https://x.com/josesaezmerino/status/2117964564285317500'),
+  links=[('CellMotion 展示页', 'https://cellmotion.cn/hand-catch.html')]),
  dict(slug='lianying', title='连盈科技发布会片', en='LY-600 Launch Film', line='品牌片', tag='客户项目', date='2026-11', ver='v8b 定稿', w=1920, h=1080, dur=173.5, poster=43.4,
   summary='给一家做康复床的工厂做的苹果发布会式宣传片，由创始人第一人称讲述，分五幕。',
   how=['五幕结构：舞台开场、产品揭幕、技术快剪、人文慢剪、回到舞台', '讲述人克隆配音，真人露脸用真实视频，产品用真实素材', '开灯揭幕、零件合拢、专利墙、文字地球都用代码做', '每幕独立制作，最后统一滤镜、中英字幕和响度'],

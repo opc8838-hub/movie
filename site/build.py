@@ -183,6 +183,10 @@ def work_pages():
         if w['how']:
             how = '<section><h2>怎么做的</h2><ul>' + ''.join(f'<li>{E(x)}</li>' for x in w['how']) + '</ul></section>'
         learned = f'<section><h2>学到了什么</h2><p>{E(w["learned"])}</p></section>' if w['learned'] else ''
+        note = E(w['note'])
+        if w.get('note_link'):
+            label, url = w['note_link']
+            note += f' <a href="{E(url)}" target="_blank" rel="noopener">{E(label)} ↗</a>'
         links = ''
         if w['links']:
             ls = ''.join(f'<a href="{rel(pre, u)}"{" target=\"_blank\" rel=\"noopener\"" if is_ext(u) else ""}>{E(t)}{" ↗" if is_ext(u) else " →"}</a>' for t, u in w['links'])
@@ -197,7 +201,7 @@ def work_pages():
     <p class="summary">{E(w['summary'])}</p>
     {how}
     {learned}
-    <section class="note"><h2>注明</h2><p>{E(w['note'])}</p></section>
+    <section class="note"><h2>注明</h2><p>{note}</p></section>
     {links}
   </div>
 </section>

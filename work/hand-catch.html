@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>接住 Hand Catch · B2W Studio</title>
+<meta name="description" content="一比一复刻手接住下落 iPhone 的演示。手机被接住后转正停稳，再拖动切换视角。">
+<meta name="theme-color" content="#000000">
+<meta property="og:title" content="接住 Hand Catch · B2W Studio">
+<meta property="og:description" content="一比一复刻手接住下落 iPhone 的演示。手机被接住后转正停稳，再拖动切换视角。">
+<meta property="og:image" content="https://opc8838-hub.github.io/movie/media/hand-catch.jpg">
+<link rel="icon" href="../assets/favicon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<header class="bar">
+  <a class="home" href="../index.html" aria-label="B2W Studio 首页"><img src="../assets/mark-white.png" alt="" width="28" height="26"><span>STUDIO</span></a>
+  <nav aria-label="主导航"><a href="../index.html#works" aria-current="page">作品</a><a href="../handbook/index.html">手册</a><a href="../index.html#methods">方法</a></nav>
+</header>
+<main id="main">
+<section class="screen"><video controls playsinline preload="metadata" poster="../media/hand-catch.jpg" src="../media/hand-catch.mp4" width="1080" height="1080" style="--ar:1080/1080;--arn:1.0000"></video></section>
+<section class="info">
+  <div><h1>接住 Hand Catch</h1><p class="en">Hand Catch</p><dl class="facts"><dt>类型</dt><dd>AI 短片</dd><dt>性质</dt><dd>复刻练习</dd><dt>时间</dt><dd>2026-11-20</dd><dt>版本</dt><dd>v3</dd><dt>规格</dt><dd>0:18 · 1080×1080</dd></dl></div>
+  <div class="body">
+    <p class="summary">一比一复刻手接住下落 iPhone 的演示。手机被接住后转正停稳，再拖动切换视角。</p>
+    <section><h2>怎么做的</h2><ul><li>用 Codex 编辑出 22 张关键帧。用一张定妆图作参考，只重画手，保留构图、手机姿态和运动模糊。</li><li>把相邻的关键帧交给海螺 MiniMax-H3-Max 做首尾帧，补出 18 段动作。</li><li>用代码量出每段实际动了多少，按原片实测的速度重排时间。关键帧之间用光流变形接起来，全片只保留原片在 11.31 秒的硬切。</li></ul></section>
+    <section><h2>学到了什么</h2><p>手先用图片编辑做静帧，一张约 1 分钟。提示词写清哪张图要改、哪张图作参考。片段两头反复减速，接起来就会顿，按原片的速度曲线重排时间就顺了。</p></section>
+    <section class="note"><h2>注明</h2><p>复刻练习。构图和节奏参考 Jose Sáez Merino 的 Matte app 演示。手和画面由 Codex 和海螺生成，剪辑节奏由代码完成。全片无声，无音乐。手机外观和锁屏为 Apple iPhone，仅作非商业展示，版权归原权利人。 <a href="https://x.com/josesaezmerino/status/2117964564285317500" target="_blank" rel="noopener">Matte 演示原帖 ↗</a></p></section>
+    <p class="more"><a href="https://cellmotion.cn/hand-catch.html" target="_blank" rel="noopener">CellMotion 展示页 ↗</a></p>
+  </div>
+</section>
+
+<nav class="pager" aria-label="上一个和下一个作品"><a href="pixel-fish.html"><small>← 上一个</small>像素鱼群</a><a href="lianying.html"><small>下一个 →</small>连盈科技发布会片</a></nav>
+</main>
+<div class="foot-logo" id="footLogo"><video muted playsinline preload="auto" src="../assets/logo-write-light.mp4" aria-hidden="true"></video><img src="../assets/logo-black.png" alt="Back 2 Work Studio" width="1244" height="280"></div>
+<footer class="colophon">
+  <p>部分作品是学习和练习，参考了别人的结构和节奏，个别还用了原片音乐。每支片都在作品页写明，相关权利归原作者。如需修改或移除，请<a href="https://github.com/opc8838-hub/movie/issues">在 GitHub 联系我们</a>。</p>
+  <p class="r">B2W Studio · 2026<br>设计 · 视频 · 动效</p>
+</footer>
+<script>
+(function(){var w=document.getElementById('footLogo');if(!w)return;var v=w.querySelector('video');
+if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){w.classList.add('static');return;}
+new IntersectionObserver(function(es,o){es.forEach(function(e){if(e.isIntersecting){o.disconnect();var p=v.play();if(p)p.catch(function(){w.classList.add('static');});}});},{threshold:.5}).observe(v);})();
+</script>
+
+</body>
+</html>

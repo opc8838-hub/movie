@@ -18,6 +18,7 @@ if not FP:
 W = r'E:\claude工作区'
 # slug: (源文件)
 J = [
+ ('hand-catch', W+r'\hand-phone\video\catch_full_v3.mp4'),
  ('back-to-work', W+r'\back-to-work-video\out\v4\back-to-work-v4.mp4'),
  ('zerog', W+r'\sanxingdui-zerog\out\sanxingdui-zerog-1920x1080.mp4'),
  ('self-love', W+r'\成片\SelfLove-秋日复刻-JandyZhang.mp4'),
